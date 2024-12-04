@@ -9,6 +9,9 @@ public class MainTestArrayStorage {
         storage.save(r2);
         assert storage.size() == 2 : "Ошибка в методе save()";
         assert storage.get("uuid1").equals(r1) : "Ошибка в методе fetch()";
+        Resume updatedResume = new Resume("uuid2");
+        storage.update(updatedResume);
+        assert storage.get("uuid2").equals(updatedResume) : "Ошибка в методе update()";
         storage.delete("uuid1");
         assert storage.size() == 1 : "Ошибка в методе delete()";
         storage.clear();
