@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class ArrayStorage {
     private static final int STORAGE_LIMIT = 10000;
-    private Resume[] storage = new Resume[STORAGE_LIMIT];
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size = 0;
 
     public void save(Resume r) {
@@ -32,9 +32,7 @@ public class ArrayStorage {
     public void delete(String uuid) {
         int index = findIndex(uuid);
         if (index != -1) {
-            for (int j = index; j < size - 1; j++) {
-                storage[j] = storage[j + 1];
-            }
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
             return;
@@ -56,12 +54,11 @@ public class ArrayStorage {
     }
 
     public void update(Resume resume) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(resume.getUuid())) {
-                storage[i] = resume;
+        int index = findIndex(resume.getUuid());
+            if (index != -1) {
+                storage[index] = resume;
                 return;
             }
-        }
         System.out.println("Резюме не найдено: " + resume.getUuid());
     }
 
