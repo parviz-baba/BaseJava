@@ -22,22 +22,22 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         int index = findIndex(uuid);
-        if (index != -1) {
-            return storage[index];
+        if (index == -1) {
+            System.out.println("Резюме не найдено: " + uuid);
+            return null;
         }
-        System.out.println("Резюме не найдено: " + uuid);
-        return null;
+        return storage[index];
     }
 
     public void delete(String uuid) {
         int index = findIndex(uuid);
-        if (index != -1) {
-            storage[index] = storage[size - 1];
-            storage[size - 1] = null;
-            size--;
+        if (index == -1) {
+            System.out.println("Резюме не найдено: " + uuid);
             return;
         }
-        System.out.println("Резюме не найдено: " + uuid);
+        storage[index] = storage[size - 1];
+        storage[size - 1] = null;
+        size--;
     }
 
     public void clear() {
@@ -55,11 +55,11 @@ public class ArrayStorage {
 
     public void update(Resume resume) {
         int index = findIndex(resume.getUuid());
-            if (index != -1) {
-                storage[index] = resume;
-                return;
-            }
-        System.out.println("Резюме не найдено: " + resume.getUuid());
+        if (index == -1) {
+            System.out.println("Резюме не найдено: " + resume.getUuid());
+            return;
+        }
+        storage[index] = resume;
     }
 
     private int findIndex(String uuid) {
