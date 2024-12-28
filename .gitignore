@@ -1,3 +1,6 @@
-/out/
-.idea/
+.idea
+*.iml
+out
+log
+lib
 /BaseJava.iml
