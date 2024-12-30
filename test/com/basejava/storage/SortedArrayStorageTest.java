@@ -1,4 +1,4 @@
-package test.com.basejava.storage;
+package com.basejava.storage;
 
 import com.basejava.storage.SortedArrayStorage;
 
