@@ -1,15 +1,11 @@
 package com.basejava.storage;
 
 import com.basejava.exception.StorageException;
-import com.basejava.storage.AbstractArrayStorage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import com.basejava.exception.NotExistStorageException;
 import com.basejava.model.Resume;
-import com.basejava.storage.Storage;
-
-import java.lang.reflect.Field;
 
 public abstract class AbstractArrayStorageTest {
     private static final Resume RESUME_1 = new Resume("uuid1");
