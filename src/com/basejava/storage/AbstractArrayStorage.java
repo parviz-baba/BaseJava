@@ -7,16 +7,16 @@ import com.basejava.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-    public int size() {
+    protected int doSize() {
         return size;
     }
 
-    public final void save(Resume r) {
+    public final void doSave(Resume r) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", null);
         } else {
@@ -24,24 +24,24 @@ public abstract class AbstractArrayStorage implements Storage {
             if (index >= 0) {
                 throw new ExistStorageException(r.getUuid());
             } else {
-                doSave(r, -(index + 1));
+                saveAtIndex(r, -(index + 1));
                 size++;
             }
         }
     }
 
-    public final void delete(String uuid) {
+    public final void doDelete(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         } else {
-            doDelete(index);
+            deleteAtIndex(index);
             storage[size - 1] = null;
             size--;
         }
     }
 
-    public Resume get(String uuid) {
+    public Resume doGet(String uuid) {
         int index = getIndex(uuid);
         if (index == -1) {
             throw new NotExistStorageException(uuid);
@@ -49,17 +49,17 @@ public abstract class AbstractArrayStorage implements Storage {
         return storage[index];
     }
 
-    public Resume[] getAll() {
+    protected Resume[] doGetAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
     @Override
-    public void clear() {
+    protected void doClear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    public void update(Resume r) {
+    public void doUpdate(Resume r) {
         int index = getIndex(r.getUuid());
         if (index < 0) {
             throw new NotExistStorageException(r.getUuid());
@@ -68,9 +68,9 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
-    protected abstract void doSave(Resume r, int index);
+    protected abstract void saveAtIndex(Resume r, int index);
 
-    protected abstract void doDelete(int index);
+    protected abstract void deleteAtIndex(int index);
 
     protected abstract int getIndex(String uuid);
 }

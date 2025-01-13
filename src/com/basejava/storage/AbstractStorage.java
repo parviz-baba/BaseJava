@@ -5,51 +5,57 @@ import com.basejava.exception.NotExistStorageException;
 import com.basejava.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
+
+    @Override
+    public int size() {
+        return doSize();
+    }
+
     @Override
     public void save(Resume r) {
-        Object searchKey = getSearchKey(r.getUuid());
-        if (isExist(searchKey)) {
-            throw new ExistStorageException(r.getUuid());
-        }
-        doSave(r, searchKey);
+        doSave(r);
     }
 
     @Override
     public void delete(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (!isExist(searchKey)) {
-            throw new NotExistStorageException(uuid);
-        }
-        doDelete(searchKey);
+        doDelete(uuid);
     }
 
     @Override
     public Resume get(String uuid) {
-        Object searchKey = getSearchKey(uuid);
-        if (!isExist(searchKey)) {
-            throw new NotExistStorageException(uuid);
-        }
-        return doGet(searchKey);
+        return doGet(uuid);
+    }
+
+    @Override
+    public Resume[] getAll() {
+        return doGetAll();
+    }
+
+    @Override
+    public void clear() {
+        doClear();
     }
 
     @Override
     public void update(Resume r) {
-        Object searchKey = getSearchKey(r.getUuid());
-        if (!isExist(searchKey)) {
-            throw new NotExistStorageException(r.getUuid());
-        }
-        doUpdate(r, searchKey);
+        doUpdate(r);
     }
 
-    protected abstract Object getSearchKey(String uuid);
+    protected abstract int doSize();
 
-    protected abstract void doSave(Resume r, Object searchKey);
+    protected abstract void doSave(Resume r);
 
-    protected abstract void doDelete(Object searchKey);
+    protected abstract void doDelete(String uuid);
 
-    protected abstract Resume doGet(Object searchKey);
+    protected abstract Resume doGet(String uuid);
 
-    protected abstract boolean isExist(Object searchKey);
+    protected abstract Resume[] doGetAll();
 
-    protected abstract void doUpdate(Resume r, Object searchKey);
+    protected abstract void doClear();
+
+    protected abstract void doUpdate(Resume r);
 }
+
+
+
+

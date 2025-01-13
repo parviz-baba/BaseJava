@@ -4,12 +4,12 @@ import com.basejava.model.Resume;
 
 public class ArrayStorage extends AbstractArrayStorage {
     @Override
-    protected void doSave(Resume r, int index) {
+    protected void saveAtIndex(Resume r, int index) {
         storage[size] = r;
     }
 
     @Override
-    protected void doDelete(int index) {
+    protected void deleteAtIndex(int index) {
         storage[index] = storage[size - 1];
     }
 
