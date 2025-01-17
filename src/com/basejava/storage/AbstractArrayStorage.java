@@ -38,12 +38,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return storage[idx];
     }
 
-    protected Resume[] doGetAll() {
+    public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
     @Override
-    protected void doClear() {
+    public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
