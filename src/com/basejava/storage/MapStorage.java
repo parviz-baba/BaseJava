@@ -3,64 +3,59 @@ package com.basejava.storage;
 import com.basejava.exception.StorageException;
 import com.basejava.model.Resume;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.basejava.storage.AbstractArrayStorage.STORAGE_LIMIT;
 
-public class ListStorage extends AbstractStorage {
-    private final List<Resume> listStorage = new ArrayList<>();
+public class MapStorage extends AbstractStorage {
+    private final Map<String, Resume> mapStrorage = new HashMap<>();
 
     @Override
     public int size() {
-        return listStorage.size();
+        return mapStrorage.size();
     }
 
     @Override
     protected void doSave(Resume r, Object searchKey) {
-        if (listStorage.size() >= STORAGE_LIMIT) {
+        if (mapStrorage.size() >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
         }
-        listStorage.add(r);
+        mapStrorage.put(r.getUuid(), r);
     }
 
     @Override
     protected void doDelete(Object searchKey) {
-        listStorage.remove((int) searchKey);
+        mapStrorage.remove((String) searchKey);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return listStorage.get((int) searchKey);
+        return mapStrorage.get((String) searchKey);
     }
 
     @Override
     public Resume[] getAll() {
-        return listStorage.toArray(new Resume[0]);
+        return mapStrorage.values().stream().sorted().toArray(Resume[]::new);
     }
 
     @Override
     public void clear() {
-        listStorage.clear();
+        mapStrorage.clear();
     }
 
     @Override
     protected void doUpdate(Resume r, Object searchKey) {
-        listStorage.set((int) searchKey, r);
+        mapStrorage.put((String) searchKey, r);
     }
 
     @Override
     protected Object getSearchKey(String uuid) {
-        for (int i = 0; i < listStorage.size(); i++) {
-            if (listStorage.get(i).getUuid().equals(uuid)) {
-                return i;
-            }
-        }
-        return null;
+        return mapStrorage.containsKey(uuid) ? uuid : null;
     }
 
     @Override
     protected boolean isExist(Object searchKey) {
-        return searchKey != null;
+        return mapStrorage.containsKey((String) searchKey);
     }
 }
