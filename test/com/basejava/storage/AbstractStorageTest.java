@@ -8,6 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.basejava.storage.AbstractArrayStorage.STORAGE_LIMIT;
+import static org.junit.Assert.assertThrows;
+
 public abstract class AbstractStorageTest {
     private static final Resume RESUME_1 = new Resume("uuid1");
     private static final Resume RESUME_2 = new Resume("uuid2");
@@ -94,15 +97,19 @@ public abstract class AbstractStorageTest {
         Assert.assertEquals(RESUME_3, resumes[2]);
     }
 
-    @Test(expected = StorageException.class)
+    @Test
     public void saveOverflow() {
-        try {
-            for (int i = 4; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume("uuid" + i));
+        if (storage instanceof AbstractArrayStorage) {
+            try {
+                for (int i = 4; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
+                    storage.save(new Resume("uuid" + i));
+                }
+            } catch (StorageException e) {
+                Assert.fail("Overflow happened too early");
             }
-        } catch (StorageException e) {
-            Assert.fail("Overflow happened too early");
+            assertThrows(StorageException.class, () -> storage.save(new Resume("overflow")));
+        } else {
+            System.out.println("saveOverflow test skipped for non-array storage");
         }
-        storage.save(new Resume("overflow"));
     }
 }
