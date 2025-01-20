@@ -5,15 +5,9 @@ import com.basejava.model.Resume;
 import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-//    @Override
-//    protected void addElement(Resume r, int index) {
-//        System.arraycopy(storage, index, storage, index + 1, size - index);
-//        storage[index] = r;
-//    }
-
     @Override
     protected void addElement(Resume r, int index) {
-        int insertionPoint = -index - 1; // Binary search mənfi dəyər qaytarsa, düzəldilir
+        int insertionPoint = -index - 1;
         System.arraycopy(storage, insertionPoint, storage, insertionPoint + 1, size - insertionPoint);
         storage[insertionPoint] = r;
     }

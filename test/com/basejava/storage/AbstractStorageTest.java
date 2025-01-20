@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.basejava.storage.AbstractArrayStorage.STORAGE_LIMIT;
 import static org.junit.Assert.assertThrows;
 
 public abstract class AbstractStorageTest {
