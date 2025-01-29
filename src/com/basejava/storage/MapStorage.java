@@ -2,57 +2,99 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
-    private final Map<String, Resume> storage = new HashMap<>();
+    private final Map<String, Resume> uuidStorage = new HashMap<>();
+    private final EmailStorage emailStorage = new EmailStorage();
 
     @Override
     public int size() {
-        return storage.size();
+        return uuidStorage.size();
     }
 
     @Override
     protected void doSave(Resume r, Object searchKey) {
-        storage.put(r.getUuid(), r);
+        uuidStorage.put(r.getUuid(), r);
+        emailStorage.addEmail(r.getEmail(), r.getUuid());
     }
 
     @Override
     protected void doDelete(Object searchKey) {
-        storage.remove((String) searchKey);
+        String uuid = (String) searchKey;
+        Resume resume = uuidStorage.remove(uuid);
+        if (resume != null) {
+            emailStorage.removeEmail(resume.getEmail());
+        }
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return storage.get((String) searchKey);
+        return uuidStorage.get((String) searchKey);
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.values().stream().sorted().toArray(Resume[]::new);
+    public List<Resume> getAllSorted() {
+        return uuidStorage.values().stream()
+                .sorted(Comparator.comparing(Resume::getFullName)
+                        .thenComparing(Resume::getUuid))
+                .toList();
     }
 
     @Override
     public void clear() {
-        storage.clear();
+        uuidStorage.clear();
+        emailStorage.clear();
     }
 
     @Override
     protected void doUpdate(Resume r, Object searchKey) {
-        storage.put((String) searchKey, r);
+        String uuid = (String) searchKey;
+        if (uuidStorage.containsKey(uuid)) {
+            Resume oldResume = uuidStorage.get(uuid);
+            emailStorage.removeEmail(oldResume.getEmail());
+            uuidStorage.put(uuid, r);
+            emailStorage.addEmail(r.getEmail(), uuid);
+        }
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
-        return uuid;
+    protected Object getSearchKey(String identifier) {
+        if (uuidStorage.containsKey(identifier)) {
+            return identifier;
+        }
+        String uuid = emailStorage.getUuidByEmail(identifier);
+        if (uuid != null) {
+            return uuid;
+        }
+        return null;
     }
 
     @Override
     protected boolean isExist(Object searchKey) {
-        if (searchKey == null) {
-            return false;
+        return uuidStorage.containsKey(searchKey);
+    }
+
+    public static class EmailStorage {
+        private final Map<String, String> emailToUuidMap = new HashMap<>();
+
+        public void addEmail(String email, String uuid) {
+            emailToUuidMap.put(email, uuid);
         }
-        return storage.containsKey((String) searchKey);
+
+        public String getUuidByEmail(String email) {
+            return emailToUuidMap.get(email);
+        }
+
+        public void removeEmail(String email) {
+            emailToUuidMap.remove(email);
+        }
+
+        public void clear() {
+            emailToUuidMap.clear();
+        }
     }
 }

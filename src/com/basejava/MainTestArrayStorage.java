@@ -3,6 +3,8 @@ package com.basejava;
 import com.basejava.model.Resume;
 import com.basejava.storage.ArrayStorage;
 
+import java.util.List;
+
 public class MainTestArrayStorage {
     private static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
@@ -26,7 +28,8 @@ public class MainTestArrayStorage {
 
     private static void printAll() {
         System.out.println("\nGet All:");
-        for (Resume r : ARRAY_STORAGE.getAll()) {
+        List<Resume> all = ARRAY_STORAGE.getAllSorted();
+        for (Resume r : all) {
             System.out.println(r);
         }
     }

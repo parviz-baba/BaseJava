@@ -4,6 +4,8 @@ import com.basejava.exception.StorageException;
 import com.basejava.model.Resume;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
@@ -38,8 +40,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return storage[idx];
     }
 
-    public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
+    @Override
+    public List<Resume> getAllSorted() {
+        return Arrays.stream(storage, 0, size)
+                .sorted(Comparator.comparing(Resume::getFullName)
+                        .thenComparing(Resume::getUuid)) // Əgər adlar eynidirsə, UUID ilə sıralayırıq
+                .toList();
     }
 
     @Override
