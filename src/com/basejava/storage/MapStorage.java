@@ -67,10 +67,7 @@ public class MapStorage extends AbstractStorage {
             return identifier;
         }
         String uuid = emailStorage.getUuidByEmail(identifier);
-        if (uuid != null) {
-            return uuid;
-        }
-        return null;
+        return uuid != null ? uuid : null;
     }
 
     @Override

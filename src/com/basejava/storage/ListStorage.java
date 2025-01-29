@@ -39,7 +39,7 @@ public class ListStorage extends AbstractStorage {
     public List<Resume> getAllSorted() {
         return listStorage.stream()
                 .sorted(Comparator.comparing(Resume::getFullName)
-                        .thenComparing(Resume::getUuid)) // Əgər adlar eynidirsə, UUID ilə sıralayırıq
+                        .thenComparing(Resume::getUuid))
                 .toList();
     }
 
