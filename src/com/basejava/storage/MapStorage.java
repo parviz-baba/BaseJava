@@ -1,5 +1,6 @@
 package com.basejava.storage;
 
+import com.basejava.exception.NotExistStorageException;
 import com.basejava.model.Resume;
 
 import java.util.Comparator;
@@ -67,7 +68,10 @@ public class MapStorage extends AbstractStorage {
             return identifier;
         }
         String uuid = emailStorage.getUuidByEmail(identifier);
-        return uuid != null ? uuid : null;
+        if (uuid == null) {
+            throw new NotExistStorageException("Resume not found with identifier: " + identifier);
+        }
+        return uuid;
     }
 
     @Override

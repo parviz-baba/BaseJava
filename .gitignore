@@ -3,4 +3,5 @@
 out
 log
 lib
-/BaseJava.iml
+BaseJava.iml
+target/

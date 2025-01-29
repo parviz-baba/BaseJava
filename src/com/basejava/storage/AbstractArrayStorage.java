@@ -44,7 +44,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     public List<Resume> getAllSorted() {
         return Arrays.stream(storage, 0, size)
                 .sorted(Comparator.comparing(Resume::getFullName)
-                        .thenComparing(Resume::getUuid)) // Əgər adlar eynidirsə, UUID ilə sıralayırıq
+                .thenComparing(Resume::getUuid))
                 .toList();
     }
 
