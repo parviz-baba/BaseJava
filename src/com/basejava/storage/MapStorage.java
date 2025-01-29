@@ -68,10 +68,7 @@ public class MapStorage extends AbstractStorage {
             return identifier;
         }
         String uuid = emailStorage.getUuidByEmail(identifier);
-        if (uuid == null) {
-            throw new NotExistStorageException("Resume not found with identifier: " + identifier);
-        }
-        return uuid;
+        return (uuid != null) ? uuid : identifier;
     }
 
     @Override

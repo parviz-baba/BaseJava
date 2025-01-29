@@ -4,13 +4,13 @@ import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.NotExistStorageException;
 import com.basejava.exception.StorageException;
 import com.basejava.model.Resume;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class AbstractStorageTest {
     private static final Resume RESUME_1 = new Resume("uuid1", "Name Surname 1");
@@ -23,7 +23,7 @@ public abstract class AbstractStorageTest {
         this.storage = storage;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         storage.clear();
         storage.save(RESUME_1);
@@ -33,19 +33,19 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void size() {
-        Assert.assertEquals(3, storage.size());
+        Assertions.assertEquals(3, storage.size());
     }
 
     @Test
     public void save() {
         storage.save(RESUME_4);
-        Assert.assertEquals(4, storage.size());
-        Assert.assertEquals(RESUME_4, storage.get("uuid4"));
+        Assertions.assertEquals(4, storage.size());
+        Assertions.assertEquals(RESUME_4, storage.get("uuid4"));
     }
 
-    @Test(expected = ExistStorageException.class)
+    @Test
     public void saveExist() {
-        storage.save(RESUME_1);
+        assertThrows(ExistStorageException.class, () -> storage.save(RESUME_1));
     }
 
     @Test
@@ -56,7 +56,7 @@ public abstract class AbstractStorageTest {
                     storage.save(new Resume("uuid" + i));
                 }
             } catch (StorageException e) {
-                Assert.fail("Overflow happened too early");
+                Assertions.fail("Overflow happened too early");
             }
             assertThrows(StorageException.class, () -> storage.save(new Resume("overflow")));
         } else {
@@ -67,47 +67,47 @@ public abstract class AbstractStorageTest {
     @Test
     public void delete() {
         storage.delete("uuid1");
-        Assert.assertEquals(2, storage.size());
+        Assertions.assertEquals(2, storage.size());
     }
 
-    @Test(expected = NotExistStorageException.class)
+    @Test
     public void deleteNotExist() {
-        storage.delete("dummy");
+        assertThrows(NotExistStorageException.class, () -> storage.delete("dummy"));
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(RESUME_1, storage.get("uuid1"));
-        Assert.assertEquals(RESUME_2, storage.get("uuid2"));
-        Assert.assertEquals(RESUME_3, storage.get("uuid3"));
+        Assertions.assertEquals(RESUME_1, storage.get("uuid1"));
+        Assertions.assertEquals(RESUME_2, storage.get("uuid2"));
+        Assertions.assertEquals(RESUME_3, storage.get("uuid3"));
     }
 
     @Test
     public void getAll() {
         List<Resume> resumes = storage.getAllSorted();
-        Assert.assertEquals(3, resumes.size());
+        Assertions.assertEquals(3, resumes.size());
     }
 
     @Test
     public void clear() {
         storage.clear();
-        Assert.assertEquals(0, storage.size());
+        Assertions.assertEquals(0, storage.size());
     }
 
     @Test
     public void update() throws Exception {
         Resume updatedResume = new Resume("uuid1", "Updated Name");
         storage.update(updatedResume);
-        Assert.assertSame(updatedResume, storage.get("uuid1"));
+        Assertions.assertSame(updatedResume, storage.get("uuid1"));
     }
 
-    @Test(expected = NotExistStorageException.class)
+    @Test
     public void updateNotExist() {
-        storage.update(RESUME_4);
+        assertThrows(NotExistStorageException.class, () -> storage.update(RESUME_4));
     }
 
-    @Test(expected = NotExistStorageException.class)
+    @Test
     public void getNotExist() {
-        storage.get("dummy");
+        assertThrows(NotExistStorageException.class, () -> storage.get("dummy"));
     }
 }
