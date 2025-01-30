@@ -71,17 +71,4 @@ public class MainArray {
         }
         System.out.println("----------------------------");
     }
-
-//    static void printAll() {
-//        Resume[] all = ARRAY_STORAGE.getAll();
-//        System.out.println("----------------------------");
-//        if (all.length == 0) {
-//            System.out.println("Empty");
-//        } else {
-//            for (Resume r : all) {
-//                System.out.println(r);
-//            }
-//        }
-//        System.out.println("----------------------------");
-//    }
 }
