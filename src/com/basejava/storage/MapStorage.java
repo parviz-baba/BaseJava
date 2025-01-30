@@ -1,6 +1,5 @@
 package com.basejava.storage;
 
-import com.basejava.exception.NotExistStorageException;
 import com.basejava.model.Resume;
 
 import java.util.Comparator;

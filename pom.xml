@@ -9,14 +9,14 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- JUnit 5 Platform Suite -->
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
             <version>1.9.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- JUnit 5 API -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -24,7 +24,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 Engine (Testlərin icrası üçün) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
