@@ -18,6 +18,11 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
+    protected Resume[] doGetAll() {
+        return Arrays.copyOf(storage, size);
+    }
+
+    @Override
     protected Object getSearchKey(String uuid) {
         Resume searchKey = new Resume(uuid, "dummy");
         return Arrays.binarySearch(storage, 0, size, searchKey);

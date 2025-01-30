@@ -2,6 +2,8 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
+import java.util.Arrays;
+
 public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected void addElement(Resume r, int index) {
@@ -11,6 +13,11 @@ public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected void removeElement(int index) {
         storage[index] = storage[size - 1];
+    }
+
+    @Override
+    protected Resume[] doGetAll() {
+        return Arrays.copyOf(storage, size);
     }
 
     @Override

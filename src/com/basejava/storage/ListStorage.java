@@ -4,7 +4,6 @@ import com.basejava.exception.StorageException;
 import com.basejava.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.basejava.storage.AbstractArrayStorage.STORAGE_LIMIT;
@@ -36,12 +35,17 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        return listStorage.stream()
-                .sorted(Comparator.comparing(Resume::getFullName)
-                        .thenComparing(Resume::getUuid))
-                .toList();
+    protected List<Resume> getAll() {
+        return new ArrayList<>(listStorage); // ArrayList birbaşa qaytarılır
     }
+
+//    @Override
+//    public List<Resume> getAllSorted() {
+//        return listStorage.stream()
+//                .sorted(Comparator.comparing(Resume::getFullName)
+//                        .thenComparing(Resume::getUuid))
+//                .toList();
+//    }
 
     @Override
     public void clear() {

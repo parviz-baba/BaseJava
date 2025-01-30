@@ -5,7 +5,6 @@ import java.util.UUID;
 public class Resume implements Comparable<Resume>{
     private final String uuid;
     private final String fullName;
-    private String email;
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -16,26 +15,12 @@ public class Resume implements Comparable<Resume>{
         this.fullName = fullName;
     }
 
-    public Resume(String uuid, String fullName, String email) {
-        this.uuid = uuid;
-        this.fullName = fullName;
-        this.email = email;
-    }
-
     public String getUuid() {
         return uuid;
     }
 
     public String getFullName() {
         return fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
