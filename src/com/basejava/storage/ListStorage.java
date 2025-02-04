@@ -8,7 +8,7 @@ import java.util.List;
 
 import static com.basejava.storage.AbstractArrayStorage.STORAGE_LIMIT;
 
-public class ListStorage extends AbstractStorage {
+public class ListStorage extends AbstractStorage<Integer> {
     private final List<Resume> listStorage = new ArrayList<>();
 
     @Override
@@ -17,7 +17,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Resume r, Object searchKey) {
+    protected void doSave(Resume r, Integer searchKey) {
         if (listStorage.size() >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
         }
@@ -25,27 +25,19 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
+    protected void doDelete(Integer searchKey) {
         listStorage.remove((int) searchKey);
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
+    protected Resume doGet(Integer searchKey) {
         return listStorage.get((int) searchKey);
     }
 
     @Override
     protected List<Resume> getAll() {
-        return new ArrayList<>(listStorage); // ArrayList birbaşa qaytarılır
+        return new ArrayList<>(listStorage);
     }
-
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        return listStorage.stream()
-//                .sorted(Comparator.comparing(Resume::getFullName)
-//                        .thenComparing(Resume::getUuid))
-//                .toList();
-//    }
 
     @Override
     public void clear() {
@@ -53,12 +45,12 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume r, Object searchKey) {
+    protected void doUpdate(Resume r, Integer searchKey) {
         listStorage.set((int) searchKey, r);
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < listStorage.size(); i++) {
             if (listStorage.get(i).getUuid().equals(uuid)) {
                 return i;
@@ -68,7 +60,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
+    protected boolean isExist(Integer searchKey) {
         return searchKey != null;
     }
 }
