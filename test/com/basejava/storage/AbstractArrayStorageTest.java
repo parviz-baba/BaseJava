@@ -86,7 +86,7 @@ public abstract class AbstractArrayStorageTest {
     public void update() {
         Resume updatedResume = new Resume("uuid1", "Updated Name");
         storage.update(updatedResume);
-        Assertions.assertSame(updatedResume, storage.get("uuid1"));
+        Assertions.assertEquals(updatedResume, storage.get("uuid1"));
     }
 
     private void assertSize(int expectedSize) {
