@@ -1,7 +1,7 @@
 package com.basejava.model;
 
 public enum SectionType {
-    OBJECTIVE("Позиция"),
+    POSITION("Позиция"),
     PERSONAL("Личные качества"),
     ACHIEVEMENT("Достижения"),
     QUALIFICATIONS("Квалификация"),
