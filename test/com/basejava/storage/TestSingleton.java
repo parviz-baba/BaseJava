@@ -1,4 +1,4 @@
-package com.basejava;
+package com.basejava.storage;
 
 import com.basejava.model.SectionType;
 
