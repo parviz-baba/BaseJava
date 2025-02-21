@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class DirectoryPrinter {
-
     public static void main(String[] args) {
         String filePath = ".\\.gitignore";
-
         File file = new File(filePath);
         try {
             System.out.println("Canonical Path: " + file.getCanonicalPath());
