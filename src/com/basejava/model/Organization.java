@@ -15,7 +15,6 @@ import static com.basejava.util.DateUtil.of;
 public class Organization implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
     private final Link homePage;
     private List<Position> positions = new ArrayList<>();
 
@@ -47,10 +46,6 @@ public class Organization implements Serializable {
         return "Organization(" + homePage + "," + positions + ')';
     }
 
-    /**
-     * gkislin
-     * 28.07.2016
-     */
     public static class Position implements Serializable{
         private final LocalDate startDate;
         private final LocalDate endDate;

@@ -8,7 +8,6 @@ import java.util.Objects;
 public class ListSection extends Section {
     @Serial
     private static final long serialVersionUID = 1L;
-
     private final List<String> items;
 
     public ListSection(String... items) {
