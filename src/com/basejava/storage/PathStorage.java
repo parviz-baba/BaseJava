@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
     private final SerializationStrategy strategy;
 
-    protected AbstractPathStorage(Path directory, SerializationStrategy strategy) {
+    protected PathStorage(Path directory, SerializationStrategy strategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         this.directory = directory;
         this.strategy = strategy;
