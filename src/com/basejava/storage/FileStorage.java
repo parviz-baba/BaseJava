@@ -78,10 +78,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> getAll() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error", null);
-        }
+        File[] files = getFiles();
         List<Resume> list = new ArrayList<>(files.length);
         for (File file : files) {
             list.add(doGet(file));
