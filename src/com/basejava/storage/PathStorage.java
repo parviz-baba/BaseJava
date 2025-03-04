@@ -2,7 +2,7 @@ package com.basejava.storage;
 
 import com.basejava.exception.StorageException;
 import com.basejava.model.Resume;
-import com.basejava.storage.strategy.SerializationStrategy;
+import com.basejava.storage.strategy.StreamSerializer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 
 public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
-    private final SerializationStrategy strategy;
+    private final StreamSerializer strategy;
 
-    protected PathStorage(Path directory, SerializationStrategy strategy) {
+    protected PathStorage(Path directory, StreamSerializer strategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         this.directory = directory;
         this.strategy = strategy;
@@ -24,6 +24,9 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     public void clear() {
         try {
+            if (!Files.exists(directory)) {
+                Files.createDirectories(directory);
+            }
             Files.list(directory).forEach(this::doDelete);
         } catch (IOException e) {
             throw new StorageException("Path delete error", null, e);

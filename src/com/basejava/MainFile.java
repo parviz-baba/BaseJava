@@ -3,6 +3,7 @@ package com.basejava;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 
 public class MainFile {
     public static void main(String[] args) {
@@ -34,7 +35,7 @@ public class MainFile {
 
     // TODO: make pretty output
     private static void printDirectory(File dir, int level) {
-        String indent = " ".repeat(level * 2);
+        String indent = String.join("", Collections.nCopies(level * 2, " "));
         System.out.println(indent + "📁" + dir.getName() + "/");
         File[] files = dir.listFiles();
         if (files != null) {
@@ -42,7 +43,7 @@ public class MainFile {
                 if (file.isDirectory()) {
                     printDirectory(file, level + 1);
                 } else {
-                    System.out.println(indent + "  " + "©️" +file.getName());
+                    System.out.println(indent + "  " + "©️" + file.getName());
                 }
             }
         }

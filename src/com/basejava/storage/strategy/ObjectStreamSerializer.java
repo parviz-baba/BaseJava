@@ -5,7 +5,8 @@ import com.basejava.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStrategy implements SerializationStrategy {
+public class ObjectStreamSerializer implements StreamSerializer {
+
     @Override
     public void write(Resume r, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
@@ -18,7 +19,7 @@ public class ObjectStreamStrategy implements SerializationStrategy {
         try (ObjectInputStream ois = new ObjectInputStream(is)) {
             return (Resume) ois.readObject();
         } catch (ClassNotFoundException e) {
-            throw new StorageException("Error reading resume", null, e);
+            throw new StorageException("Error read resume", null, e);
         }
     }
 }

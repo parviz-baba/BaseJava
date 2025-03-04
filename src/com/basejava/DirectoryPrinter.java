@@ -2,6 +2,7 @@ package com.basejava;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 public class DirectoryPrinter {
     public static void main(String[] args) {
@@ -30,7 +31,7 @@ public class DirectoryPrinter {
             System.err.println("Directory does not exist: " + dir.getAbsolutePath());
             return;
         }
-        String indent = " ".repeat(level * 2);
+        String indent = String.join("", Collections.nCopies(level * 2, " "));
         System.out.println(indent + "📁 " + dir.getName() + " (" + dir.getAbsolutePath() + ")");
         File[] files = dir.listFiles();
         if (files != null) {

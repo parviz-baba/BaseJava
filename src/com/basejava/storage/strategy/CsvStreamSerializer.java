@@ -6,7 +6,7 @@ import org.apache.commons.csv.*;
 import java.io.*;
 import java.util.List;
 
-public class CsvStreamStrategy implements SerializationStrategy {
+public class CsvStreamSerializer implements StreamSerializer {
     @Override
     public void write(Resume r, OutputStream os) throws IOException {
         try (Writer writer = new OutputStreamWriter(os);

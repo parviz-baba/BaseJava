@@ -1,6 +1,7 @@
 package com.basejava;
 
 import java.io.File;
+import java.util.Collections;
 
 public class FileTreePrinter {
     public static void main(String[] args) {
@@ -13,7 +14,7 @@ public class FileTreePrinter {
     }
 
     private static void printDirectory(File dir, int level) {
-        String indent = " ".repeat(level * 2);
+        String indent = String.join("", Collections.nCopies(level * 2, " "));
         System.out.println(indent + "📁" + dir.getName() + "/");
         File[] files = dir.listFiles();
         if (files != null) {
@@ -21,7 +22,7 @@ public class FileTreePrinter {
                 if (file.isDirectory()) {
                     printDirectory(file, level + 1);
                 } else {
-                    System.out.println(indent + "  " + "©️" +file.getName());
+                    System.out.println(indent + "  " + "©️" + file.getName());
                 }
             }
         }

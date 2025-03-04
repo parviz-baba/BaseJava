@@ -4,6 +4,7 @@ import com.basejava.model.*;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Arrays;
 import java.util.List;
 
 public class ResumeTestData {
@@ -36,40 +37,40 @@ public class ResumeTestData {
         resume.addSection(SectionType.PERSONAL, new TextSection("Responsible, hard-working, team player"));
         resume.addSection(SectionType.OBJECTIVE, new TextSection("Seeking a Senior Java Developer role"));
         resume.addSection(SectionType.QUALIFICATIONS, new ListSection(
-                List.of("Java", "Spring Boot", "PostgreSQL", "Docker")
+                Arrays.asList("Java", "Spring Boot", "PostgreSQL", "Docker")
         ));
 
         resume.addSection(SectionType.ACHIEVEMENT, new ListSection(
-                List.of("Developed a scalable Java backend system",
+                Arrays.asList("Developed a scalable Java backend system",
                         "Optimized database queries by 40%",
                         "Mentored junior developers")
         ));
 
-        List<Organization.Position> googlePeriods = List.of(
+        List<Organization.Position> googlePeriods = Arrays.asList(
                 new Organization.Position(LocalDate.of(2020, Month.JANUARY, 1),
                         LocalDate.of(2023, Month.DECEMBER, 31),
                         "Junior Developer", "Worked on AI projects")
         );
 
-        List<Organization.Position> amazonPeriods = List.of(
+        List<Organization.Position> amazonPeriods = Arrays.asList(
                 new Organization.Position(LocalDate.of(2017, Month.MAY, 1),
                         LocalDate.of(2019, Month.DECEMBER, 31),
                         "Software Engineer", "Developed cloud solutions")
         );
 
         resume.addSection(SectionType.EXPERIENCE, new OrganizationSection(
-                List.of(new Organization(new Link("Google", "https://google.com"), googlePeriods),
+                Arrays.asList(new Organization(new Link("Google", "https://google.com"), googlePeriods),
                         new Organization(new Link("Amazon", "https://amazon.com"), amazonPeriods))
         ));
 
-        List<Organization.Position> universityPeriods = List.of(
+        List<Organization.Position> universityPeriods = Arrays.asList(
                 new Organization.Position(LocalDate.of(2012, Month.SEPTEMBER, 1),
                         LocalDate.of(2016, Month.JUNE, 30),
                         "Bachelor in Computer Science", "Graduated with honors")
         );
 
         resume.addSection(SectionType.EDUCATION, new OrganizationSection(
-                List.of(new Organization(new Link("MIT", "https://mit.edu"), universityPeriods))
+                Arrays.asList(new Organization(new Link("MIT", "https://mit.edu"), universityPeriods))
         ));
 
         return resume;

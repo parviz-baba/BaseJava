@@ -13,11 +13,11 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SerializationStrategyTest {
-    private SerializationStrategy strategy;
+    private StreamSerializer strategy;
 
     @BeforeEach
     void setUp() {
-        strategy = new JsonStreamStrategy();
+        strategy = new JsonStreamSerializer();
     }
 
     @Test
@@ -33,15 +33,15 @@ class SerializationStrategyTest {
 
     @Test
     void testDifferentStrategies() throws IOException, JAXBException {
-        SerializationStrategy[] strategies = {
-                new JsonStreamStrategy(),
-                new CsvStreamStrategy(),
-                new XmlStreamStrategy(),
-                new ObjectStreamStrategy()
+        StreamSerializer[] strategies = {
+                new JsonStreamSerializer(),
+                new CsvStreamSerializer(),
+                new XmlStreamSerializer(),
+                new ObjectStreamSerializer()
         };
 
         Resume resume = new Resume("John Doe");
-        for (SerializationStrategy strategy : strategies) {
+        for (StreamSerializer strategy : strategies) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             strategy.write(resume, baos);
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
