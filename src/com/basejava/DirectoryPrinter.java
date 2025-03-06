@@ -2,10 +2,14 @@ package com.basejava;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
+
+import static com.basejava.util.CollectionUtils.writeWithException;
 
 public class DirectoryPrinter {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String filePath = ".\\.gitignore";
         File file = new File(filePath);
         try {
@@ -18,15 +22,13 @@ public class DirectoryPrinter {
         String[] list = dir.list();
         if (list != null) {
             System.out.println("\nContents of directory:");
-            for (String name : list) {
-                System.out.println(name);
-            }
+            writeWithException(Arrays.stream(list), System.out::println);
         }
         System.out.println();
         printDirectory(dir, 0);
     }
 
-    private static void printDirectory(File dir, int level) {
+    private static void printDirectory(File dir, int level) throws IOException {
         if (!dir.exists()) {
             System.err.println("Directory does not exist: " + dir.getAbsolutePath());
             return;
@@ -35,13 +37,13 @@ public class DirectoryPrinter {
         System.out.println(indent + "📁 " + dir.getName() + " (" + dir.getAbsolutePath() + ")");
         File[] files = dir.listFiles();
         if (files != null) {
-            for (File file : files) {
+            writeWithException(Stream.of(files), file -> {
                 if (file.isDirectory()) {
                     printDirectory(file, level + 1);
                 } else {
                     System.out.println(indent + "  ©️ " + file.getName());
                 }
-            }
+            });
         } else {
             System.err.println("Error reading contents of directory: " + dir.getAbsolutePath());
         }

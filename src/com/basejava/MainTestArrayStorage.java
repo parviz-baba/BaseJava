@@ -3,12 +3,13 @@ package com.basejava;
 import com.basejava.model.Resume;
 import com.basejava.storage.ArrayStorage;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainTestArrayStorage {
     private static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Resume r1 = new Resume("uuid1");
         Resume r2 = new Resume("uuid2");
         Resume r3 = new Resume("uuid3");
@@ -26,7 +27,7 @@ public class MainTestArrayStorage {
         System.out.println("Size: " + ARRAY_STORAGE.size());
     }
 
-    private static void printAll() {
+    private static void printAll() throws IOException {
         System.out.println("\nGet All:");
         List<Resume> all = ARRAY_STORAGE.getAllSorted();
         for (Resume r : all) {

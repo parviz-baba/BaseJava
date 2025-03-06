@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Month;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public abstract class AbstractStorageTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         if (!STORAGE_DIR.exists()) {
             STORAGE_DIR.mkdirs();
         }
@@ -127,13 +128,13 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAll() {
+    public void getAll() throws IOException {
         List<Resume> resumes = storage.getAllSorted();
         Assertions.assertEquals(3, resumes.size());
     }
 
     @Test
-    public void clear() {
+    public void clear() throws IOException {
         storage.clear();
         Assertions.assertEquals(0, storage.size());
     }

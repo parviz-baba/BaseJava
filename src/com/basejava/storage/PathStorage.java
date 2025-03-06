@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.basejava.util.CollectionUtils.writeWithException;
+
 public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
     private final StreamSerializer strategy;
@@ -27,7 +29,7 @@ public class PathStorage extends AbstractStorage<Path> {
             if (!Files.exists(directory)) {
                 Files.createDirectories(directory);
             }
-            Files.list(directory).forEach(this::doDelete);
+            writeWithException(Files.list(directory), this::doDelete);
         } catch (IOException e) {
             throw new StorageException("Path delete error", null, e);
         }

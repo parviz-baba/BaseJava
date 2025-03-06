@@ -8,6 +8,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
+
+import static com.basejava.util.CollectionUtils.writeWithException;
 
 public class FileStorage extends AbstractStorage<File> {
     private final File directory;
@@ -20,10 +23,8 @@ public class FileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    public void clear() {
-        for (File file : getFiles()) {
-            doDelete(file);
-        }
+    public void clear() throws IOException {
+        writeWithException(Stream.of(getFiles()), this::doDelete);
     }
 
     @Override
@@ -77,12 +78,9 @@ public class FileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected List<Resume> getAll() {
-        File[] files = getFiles();
-        List<Resume> list = new ArrayList<>(files.length);
-        for (File file : files) {
-            list.add(doGet(file));
-        }
+    protected List<Resume> getAll() throws IOException {
+        List<Resume> list = new ArrayList<>();
+        writeWithException(Stream.of(getFiles()), file -> list.add(doGet(file)));
         return list;
     }
 

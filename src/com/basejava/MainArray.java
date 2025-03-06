@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import static com.basejava.util.CollectionUtils.writeWithException;
+
 public class MainArray {
     private final static Storage ARRAY_STORAGE = new ArrayStorage();
 
@@ -63,15 +65,13 @@ public class MainArray {
         }
     }
 
-    static void printAll() {
+    static void printAll() throws IOException {
         List<Resume> all = ARRAY_STORAGE.getAllSorted();
         System.out.println("----------------------------");
         if (all.isEmpty()) {
             System.out.println("Empty");
         } else {
-            for (Resume r : all) {
-                System.out.println(r);
-            }
+            writeWithException(all.stream(), System.out::println);
         }
         System.out.println("----------------------------");
     }

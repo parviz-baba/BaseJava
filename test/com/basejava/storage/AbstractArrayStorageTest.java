@@ -8,6 +8,7 @@ import com.basejava.exception.NotExistStorageException;
 import com.basejava.model.Resume;
 
 
+import java.io.IOException;
 import java.util.List;
 
 public abstract class AbstractArrayStorageTest {
@@ -70,13 +71,13 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void getAll(){
+    public void getAll() throws IOException {
         List<Resume> resumes = storage.getAllSorted();
         Assertions.assertEquals(3, resumes.size());
     }
 
     @Test
-    public void clear() {
+    public void clear() throws IOException {
         storage.clear();
         assertSize(0);
         Assertions.assertTrue(storage.getAllSorted().isEmpty());

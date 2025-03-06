@@ -2,7 +2,10 @@ package com.basejava;
 
 import com.basejava.model.Resume;
 
+import java.io.IOException;
 import java.util.*;
+
+import static com.basejava.util.CollectionUtils.writeWithException;
 
 public class MainCollections {
     private static final String UUID_1 = "uuid1";
@@ -17,15 +20,13 @@ public class MainCollections {
     private static final String UUID_4 = "uuid4";
     private static final Resume RESUME_4 = new Resume(UUID_4, "Name Surname 4");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Collection<Resume> collection = new ArrayList<>();
         collection.add(RESUME_1);
         collection.add(RESUME_2);
         collection.add(RESUME_3);
 
-        for (Resume r : collection) {
-            System.out.println(r);
-        }
+        writeWithException(collection.stream(), System.out::println);
 
         Iterator<Resume> iterator = collection.iterator();
         while (iterator.hasNext()) {
@@ -43,12 +44,8 @@ public class MainCollections {
         map.put(UUID_2, RESUME_2);
         map.put(UUID_3, RESUME_3);
 
-        for (String uuid : map.keySet()) {
-            System.out.println(map.get(uuid));
-        }
+        writeWithException(map.keySet().stream(), System.out::println);
 
-        for (Map.Entry<String, Resume> entry : map.entrySet()) {
-            System.out.println(entry.getValue());
-        }
+        writeWithException(map.entrySet().stream(), entry -> System.out.println(entry.getValue()));
     }
 }

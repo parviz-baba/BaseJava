@@ -4,6 +4,7 @@ import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.NotExistStorageException;
 import com.basejava.model.Resume;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -33,7 +34,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    public List<Resume> getAllSorted() throws IOException {
         LOG.info("Get all sorted");
         List<Resume> resumes = getAll();
         Collections.sort(resumes);
@@ -77,5 +78,5 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract boolean isExist(SK searchKey);
 
-    protected abstract List<Resume> getAll();
+    protected abstract List<Resume> getAll() throws IOException;
 }
