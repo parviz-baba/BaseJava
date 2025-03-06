@@ -2,11 +2,7 @@ package com.basejava;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.stream.Stream;
-
-import static com.basejava.util.CollectionUtils.writeWithException;
 
 public class DirectoryPrinter {
     public static void main(String[] args) throws IOException {
@@ -22,7 +18,9 @@ public class DirectoryPrinter {
         String[] list = dir.list();
         if (list != null) {
             System.out.println("\nContents of directory:");
-            writeWithException(Arrays.stream(list), System.out::println);
+            for (String name : list) {
+                System.out.println(name);
+            }
         }
         System.out.println();
         printDirectory(dir, 0);
@@ -37,13 +35,9 @@ public class DirectoryPrinter {
         System.out.println(indent + "📁 " + dir.getName() + " (" + dir.getAbsolutePath() + ")");
         File[] files = dir.listFiles();
         if (files != null) {
-            writeWithException(Stream.of(files), file -> {
-                if (file.isDirectory()) {
-                    printDirectory(file, level + 1);
-                } else {
-                    System.out.println(indent + "  ©️ " + file.getName());
-                }
-            });
+            for (File file : files) {
+                System.out.println(file.getName());
+            }
         } else {
             System.err.println("Error reading contents of directory: " + dir.getAbsolutePath());
         }

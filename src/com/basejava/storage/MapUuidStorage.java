@@ -8,21 +8,26 @@ import java.util.List;
 import java.util.Map;
 
 public class MapUuidStorage extends AbstractStorage<String> {
-    private final Map<String, Resume> storage = new HashMap<>();
+    private Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    public int size() {
-        return storage.size();
+    protected String getSearchKey(String uuid) {
+        return uuid;
+    }
+
+    @Override
+    protected void doUpdate(Resume r, String uuid) {
+        storage.put(uuid, r);
+    }
+
+    @Override
+    protected boolean isExist(String uuid) {
+        return storage.containsKey(uuid);
     }
 
     @Override
     protected void doSave(Resume r, String uuid) {
-        storage.put(r.getUuid(), r);
-    }
-
-    @Override
-    protected void doDelete(String uuid) {
-        storage.remove(uuid);
+        storage.put(uuid, r);
     }
 
     @Override
@@ -31,8 +36,8 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected List<Resume> getAll() {
-        return new ArrayList<>(storage.values());
+    protected void doDelete(String uuid) {
+        storage.remove(uuid);
     }
 
     @Override
@@ -41,22 +46,12 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    protected void doUpdate(Resume r, String uuid) {
-        if (storage.containsKey(uuid)) {
-            storage.put(uuid, r);
-        }
+    public List<Resume> doCopyAll() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override
-    protected String getSearchKey(String uuid) {
-        return uuid;
-    }
-
-    @Override
-    protected boolean isExist(String uuid) {
-        if (uuid == null) {
-            return false;
-        }
-        return storage.containsKey(uuid);
+    public int size() {
+        return storage.size();
     }
 }

@@ -19,10 +19,12 @@ import static com.basejava.util.DateUtil.of;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private Link homePage;
     private List<Position> positions = new ArrayList<>();
 
-    public Organization() {}
+    public Organization() {
+    }
 
     public Organization(String name, String url, Position... positions) {
         this(new Link(name, url), Arrays.asList(positions));
@@ -61,7 +63,7 @@ public class Organization implements Serializable {
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Position implements Serializable{
+    public static class Position implements Serializable {
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate startDate;
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
@@ -69,13 +71,7 @@ public class Organization implements Serializable {
         private String title;
         private String description;
 
-        public Position() {}
-
-        public Position(String title, String description, long startDateEpoch, long endDateEpoch) {
-            this.title = title;
-            this.description = description;
-            this.startDate = LocalDate.ofEpochDay(startDateEpoch);
-            this.endDate = LocalDate.ofEpochDay(endDateEpoch);
+        public Position() {
         }
 
         public Position(int startYear, Month startMonth, String title, String description) {
@@ -93,7 +89,7 @@ public class Organization implements Serializable {
             this.startDate = startDate;
             this.endDate = endDate;
             this.title = title;
-            this.description = description;
+            this.description = description == null ? "" : description;
         }
 
         public LocalDate getStartDate() {

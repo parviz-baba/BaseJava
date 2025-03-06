@@ -3,119 +3,114 @@ package com.basejava.storage.strategy;
 import com.basejava.model.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class DataStreamSerializer implements StreamSerializer {
 
     @Override
-    public void write(Resume resume, OutputStream os) throws IOException {
+    public void write(Resume r, OutputStream os) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
-            dos.writeUTF(resume.getUuid());
-            dos.writeUTF(resume.getFullName());
-
-            Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            dos.writeUTF(r.getUuid());
+            dos.writeUTF(r.getFullName());
+            writeItems(dos, r.getContacts().entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
-
-            Map<SectionType, Section> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
+            });
+            writeItems(dos, r.getSections().entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
-                switch (entry.getKey()) {
-                    case PERSONAL:
-                    case OBJECTIVE:
-                        dos.writeUTF(((TextSection) entry.getValue()).getContent());
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        List<String> items = ((ListSection) entry.getValue()).getItems();
-                        dos.writeInt(items.size());
-                        for (String item : items) {
-                            dos.writeUTF(item);
-                        }
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        List<Organization> orgs = ((OrganizationSection) entry.getValue()).getOrganizations();
-                        dos.writeInt(orgs.size());
-                        for (Organization org : orgs) {
-                            dos.writeUTF(org.getHomePage().getName());
-                            dos.writeUTF(org.getHomePage().getUrl() == null ? "" : org.getHomePage().getUrl());
-                            List<Organization.Position> positions = org.getPositions();
-                            dos.writeInt(positions.size());
-                            for (Organization.Position position : positions) {
-                                dos.writeUTF(position.getTitle());
-                                dos.writeUTF(position.getDescription() == null ? "" : position.getDescription());
-                                dos.writeLong(position.getStartDate().toEpochDay());
-                                dos.writeLong(position.getEndDate().toEpochDay());
-                            }
-                        }
-                        break;
+                Section section = entry.getValue();
+                if (section instanceof TextSection) {
+                    dos.writeUTF(((TextSection) section).getContent());
+                } else if (section instanceof ListSection) {
+                    writeItems(dos, ((ListSection) section).getItems(), dos::writeUTF);
+                } else if (section instanceof OrganizationSection) {
+                    writeItems(dos, ((OrganizationSection) section).getOrganizations(), org -> {
+                        dos.writeUTF(org.getHomePage().getName());
+                        dos.writeUTF(org.getHomePage().getUrl());
+                        writeItems(dos, org.getPositions(), position -> {
+                            writeLocalDate(dos, position.getStartDate());
+                            writeLocalDate(dos, position.getEndDate());
+                            dos.writeUTF(position.getTitle());
+                            dos.writeUTF(position.getDescription());
+                        });
+                    });
                 }
-            }
+            });
         }
+    }
+
+    private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
+        dos.writeLong(ld.toEpochDay());
+    }
+
+    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
+        return LocalDate.ofEpochDay(dis.readLong());
     }
 
     @Override
     public Resume read(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
-            String uuid = dis.readUTF();
-            String fullName = dis.readUTF();
-            Resume resume = new Resume(uuid, fullName);
-
-            int contactsSize = dis.readInt();
-            for (int i = 0; i < contactsSize; i++) {
-                ContactType type = ContactType.valueOf(dis.readUTF());
-                String value = dis.readUTF();
-                resume.addContact(type, value);
-            }
-
-            int sectionsSize = dis.readInt();
-            for (int i = 0; i < sectionsSize; i++) {
-                SectionType type = SectionType.valueOf(dis.readUTF());
-                switch (type) {
-                    case PERSONAL:
-                    case OBJECTIVE:
-                        resume.addSection(type, new TextSection(dis.readUTF()));
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        int listSize = dis.readInt();
-                        List<String> items = new ArrayList<>();
-                        for (int j = 0; j < listSize; j++) {
-                            items.add(dis.readUTF());
-                        }
-                        resume.addSection(type, new ListSection(items));
-                        break;
-                    case EXPERIENCE:
-                    case EDUCATION:
-                        int orgSize = dis.readInt();
-                        List<Organization> orgs = new ArrayList<>();
-                        for (int j = 0; j < orgSize; j++) {
-                            String name = dis.readUTF();
-                            String url = dis.readUTF();
-                            if (url.isEmpty()) url = null;
-                            List<Organization.Position> positions = new ArrayList<>();
-                            int posSize = dis.readInt();
-                            for (int k = 0; k < posSize; k++) {
-                                String title = dis.readUTF();
-                                String description = dis.readUTF();
-                                long startDate = dis.readLong();
-                                long endDate = dis.readLong();
-                                positions.add(new Organization.Position(title, description, startDate, endDate));
-                            }
-                            orgs.add(new Organization(new Link(name, url), positions));
-                        }
-                        resume.addSection(type, new OrganizationSection(orgs));
-                        break;
-                }
-            }
+            Resume resume = new Resume(dis.readUTF(), dis.readUTF());
+            readItems(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readItems(dis, () -> {
+                SectionType sectionType = SectionType.valueOf(dis.readUTF());
+                resume.addSection(sectionType, readSection(dis, sectionType));
+            });
             return resume;
+        }
+    }
+
+    private Section readSection(DataInputStream dis, SectionType sectionType) throws IOException {
+        if (sectionType == SectionType.PERSONAL || sectionType == SectionType.OBJECTIVE) {
+            return new TextSection(dis.readUTF());
+        } else if (sectionType == SectionType.ACHIEVEMENT || sectionType == SectionType.QUALIFICATIONS) {
+            return new ListSection(readItems(dis, () -> dis.readUTF()));
+        } else if (sectionType == SectionType.EXPERIENCE || sectionType == SectionType.EDUCATION) {
+            return new OrganizationSection(
+                    readItems(dis, () -> new Organization(
+                            new Link(dis.readUTF(), dis.readUTF()),
+                            readItems(dis, () -> new Organization.Position(
+                                    readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()
+                            ))
+                    ))
+            );
+        }
+        throw new IllegalStateException();
+    }
+
+    private <T> void writeItems(DataOutputStream dos, Collection<T> items, ElementWriter<T> writer) throws IOException {
+        dos.writeInt(items.size());
+        for (T item : items) {
+            writer.write(item);
+        }
+    }
+
+    private <T> List<T> readItems(DataInputStream dis, ElementReader<T> reader) throws IOException {
+        int size = dis.readInt();
+        List<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(reader.read());
+        }
+        return list;
+    }
+
+    private interface ElementProcessor {
+        void process() throws IOException;
+    }
+
+    private interface ElementReader<T> {
+        T read() throws IOException;
+    }
+
+    private interface ElementWriter<T> {
+        void write(T t) throws IOException;
+    }
+
+    private void readItems(DataInputStream dis, ElementProcessor processor) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            processor.process();
         }
     }
 }

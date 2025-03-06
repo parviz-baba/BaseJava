@@ -6,17 +6,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-    private static final Comparator<Resume> RESUME_COMPARATOR = (o1, o2) -> o1.getUuid().compareTo(o2.getUuid());
+    private static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getUuid);
 
     @Override
-    protected void addElement(Resume r, int index) {
-        int insertionPoint = -index - 1;
-        System.arraycopy(storage, insertionPoint, storage, insertionPoint + 1, size - insertionPoint);
-        storage[insertionPoint] = r;
-    }
-
-    @Override
-    protected void removeElement(int index) {
+    protected void fillDeletedElement(int index) {
         int numMoved = size - index - 1;
         if (numMoved > 0) {
             System.arraycopy(storage, index + 1, storage, index, numMoved);
@@ -24,18 +17,15 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected Resume[] doGetAll() {
-        return Arrays.copyOf(storage, size);
+    protected void insertElement(Resume r, int index) {
+        int insertIdx = -index - 1;
+        System.arraycopy(storage, insertIdx, storage, insertIdx + 1, size - insertIdx);
+        storage[insertIdx] = r;
     }
 
     @Override
     protected Integer getSearchKey(String uuid) {
         Resume searchKey = new Resume(uuid, "dummy");
         return Arrays.binarySearch(storage, 0, size, searchKey, RESUME_COMPARATOR);
-    }
-
-    @Override
-    protected boolean isExist(Integer searchKey) {
-        return (Integer) searchKey >= 0;
     }
 }

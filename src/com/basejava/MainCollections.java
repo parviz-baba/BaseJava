@@ -5,8 +5,6 @@ import com.basejava.model.Resume;
 import java.io.IOException;
 import java.util.*;
 
-import static com.basejava.util.CollectionUtils.writeWithException;
-
 public class MainCollections {
     private static final String UUID_1 = "uuid1";
     private static final Resume RESUME_1 = new Resume(UUID_1, "Name Surname 1");
@@ -26,7 +24,9 @@ public class MainCollections {
         collection.add(RESUME_2);
         collection.add(RESUME_3);
 
-        writeWithException(collection.stream(), System.out::println);
+        for (Resume r : collection) {
+            System.out.println(r);
+        }
 
         Iterator<Resume> iterator = collection.iterator();
         while (iterator.hasNext()) {
@@ -44,8 +44,12 @@ public class MainCollections {
         map.put(UUID_2, RESUME_2);
         map.put(UUID_3, RESUME_3);
 
-        writeWithException(map.keySet().stream(), System.out::println);
+        for (String uuid : map.keySet()) {
+            System.out.println(uuid);
+        }
 
-        writeWithException(map.entrySet().stream(), entry -> System.out.println(entry.getValue()));
+        for (Map.Entry<String, Resume> entry : map.entrySet()) {
+            System.out.println(entry.getValue());
+        }
     }
 }

@@ -3,9 +3,6 @@ package com.basejava;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.stream.Stream;
-
-import static com.basejava.util.CollectionUtils.writeWithException;
 
 public class FileTreePrinter {
     public static void main(String[] args) throws IOException {
@@ -22,13 +19,9 @@ public class FileTreePrinter {
         System.out.println(indent + "📁" + dir.getName() + "/");
         File[] files = dir.listFiles();
         if (files != null) {
-            writeWithException(Stream.of(files), file -> {
-                if (file.isDirectory()) {
-                    printDirectory(file, level + 1);
-                } else {
-                    System.out.println(indent + "  ©️ " + file.getName());
-                }
-            });
+            for (File file : files) {
+                System.out.println(file.getName());
+            }
         }
     }
 }
