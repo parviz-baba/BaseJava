@@ -40,12 +40,15 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
-        dos.writeLong(ld.toEpochDay());
+    private <T> void writeItems(DataOutputStream dos, Collection<T> items, ElementWriter<T> writer) throws IOException {
+        dos.writeInt(items.size());
+        for (T item : items) {
+            writer.write(item);
+        }
     }
 
-    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
-        return LocalDate.ofEpochDay(dis.readLong());
+    private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
+        dos.writeLong(ld.toEpochDay());
     }
 
     @Override
@@ -58,6 +61,22 @@ public class DataStreamSerializer implements StreamSerializer {
                 resume.addSection(sectionType, readSection(dis, sectionType));
             });
             return resume;
+        }
+    }
+
+    private <T> List<T> readItems(DataInputStream dis, ElementReader<T> reader) throws IOException {
+        int size = dis.readInt();
+        List<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(reader.read());
+        }
+        return list;
+    }
+
+    private void readItems(DataInputStream dis, ElementProcessor processor) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            processor.process();
         }
     }
 
@@ -79,20 +98,8 @@ public class DataStreamSerializer implements StreamSerializer {
         throw new IllegalStateException();
     }
 
-    private <T> void writeItems(DataOutputStream dos, Collection<T> items, ElementWriter<T> writer) throws IOException {
-        dos.writeInt(items.size());
-        for (T item : items) {
-            writer.write(item);
-        }
-    }
-
-    private <T> List<T> readItems(DataInputStream dis, ElementReader<T> reader) throws IOException {
-        int size = dis.readInt();
-        List<T> list = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            list.add(reader.read());
-        }
-        return list;
+    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
+        return LocalDate.ofEpochDay(dis.readLong());
     }
 
     private interface ElementProcessor {
@@ -105,12 +112,5 @@ public class DataStreamSerializer implements StreamSerializer {
 
     private interface ElementWriter<T> {
         void write(T t) throws IOException;
-    }
-
-    private void readItems(DataInputStream dis, ElementProcessor processor) throws IOException {
-        int size = dis.readInt();
-        for (int i = 0; i < size; i++) {
-            processor.process();
-        }
     }
 }
