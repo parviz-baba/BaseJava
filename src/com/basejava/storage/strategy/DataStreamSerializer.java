@@ -81,21 +81,26 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     private Section readSection(DataInputStream dis, SectionType sectionType) throws IOException {
-        if (sectionType == SectionType.PERSONAL || sectionType == SectionType.OBJECTIVE) {
-            return new TextSection(dis.readUTF());
-        } else if (sectionType == SectionType.ACHIEVEMENT || sectionType == SectionType.QUALIFICATIONS) {
-            return new ListSection(readItems(dis, () -> dis.readUTF()));
-        } else if (sectionType == SectionType.EXPERIENCE || sectionType == SectionType.EDUCATION) {
-            return new OrganizationSection(
-                    readItems(dis, () -> new Organization(
-                            new Link(dis.readUTF(), dis.readUTF()),
-                            readItems(dis, () -> new Organization.Position(
-                                    readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()
-                            ))
-                    ))
-            );
+        switch (sectionType) {
+            case PERSONAL:
+            case OBJECTIVE:
+                return new TextSection(dis.readUTF());
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection(readItems(dis, () -> dis.readUTF()));
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection(
+                        readItems(dis, () -> new Organization(
+                                new Link(dis.readUTF(), dis.readUTF()),
+                                readItems(dis, () -> new Organization.Position(
+                                        readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()
+                                ))
+                        ))
+                );
+            default:
+                throw new IllegalStateException("Bilinməyən bölmə növü: " + sectionType);
         }
-        throw new IllegalStateException();
     }
 
     private LocalDate readLocalDate(DataInputStream dis) throws IOException {
