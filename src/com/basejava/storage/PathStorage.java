@@ -34,27 +34,12 @@ public class PathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    public int size() {
-        return (int) getFilesList().count();
-    }
-
-    @Override
-    protected Path getSearchKey(String uuid) {
-        return directory.resolve(uuid);
-    }
-
-    @Override
     protected void doUpdate(Resume r, Path path) {
         try {
             streamSerializer.write(r, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path write error", r.getUuid(), e);
         }
-    }
-
-    @Override
-    protected boolean isExist(Path path) {
-        return Files.isRegularFile(path);
     }
 
     @Override
@@ -88,6 +73,21 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected List<Resume> doCopyAll() {
         return getFilesList().map(this::doGet).collect(Collectors.toList());
+    }
+
+    @Override
+    public int size() {
+        return (int) getFilesList().count();
+    }
+
+    @Override
+    protected Path getSearchKey(String uuid) {
+        return directory.resolve(uuid);
+    }
+
+    @Override
+    protected boolean isExist(Path path) {
+        return Files.isRegularFile(path);
     }
 
     private String getFileName(Path path) {

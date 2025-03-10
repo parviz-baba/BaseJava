@@ -36,31 +36,12 @@ public class FileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    public int size() {
-        String[] list = directory.list();
-        if (list == null) {
-            throw new StorageException("Directory read error");
-        }
-        return list.length;
-    }
-
-    @Override
-    protected File getSearchKey(String uuid) {
-        return new File(directory, uuid);
-    }
-
-    @Override
     protected void doUpdate(Resume r, File file) {
         try {
             streamSerializer.write(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", r.getUuid(), e);
         }
-    }
-
-    @Override
-    protected boolean isExist(File file) {
-        return file.exists();
     }
 
     @Override
@@ -100,5 +81,24 @@ public class FileStorage extends AbstractStorage<File> {
             list.add(doGet(file));
         }
         return list;
+    }
+
+    @Override
+    public int size() {
+        String[] list = directory.list();
+        if (list == null) {
+            throw new StorageException("Directory read error");
+        }
+        return list.length;
+    }
+
+    @Override
+    protected File getSearchKey(String uuid) {
+        return new File(directory, uuid);
+    }
+
+    @Override
+    protected boolean isExist(File file) {
+        return file.exists();
     }
 }
