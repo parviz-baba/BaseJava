@@ -3,7 +3,7 @@ package com.basejava;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Stream12 {
+public class StreamTask_Lesson12 {
 
     public static int minValue(int[] values) {
         return Arrays.stream(values)
