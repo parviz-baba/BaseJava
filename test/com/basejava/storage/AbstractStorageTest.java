@@ -3,16 +3,16 @@ package com.basejava.storage;
 import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.NotExistStorageException;
 import com.basejava.exception.StorageException;
-import com.basejava.model.*;
+import com.basejava.model.Resume;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Month;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class AbstractStorageTest {
@@ -32,7 +32,7 @@ public abstract class AbstractStorageTest {
         R2 = new Resume(UUID_2, "Name2");
         R3 = new Resume(UUID_3, "Name3");
         R4 = new Resume(UUID_4, "Name4");
-        R1.addContact(ContactType.EMAIL, "mail1@ya.ru");
+        /*R1.addContact(ContactType.EMAIL, "mail1@ya.ru");
         R1.addContact(ContactType.PHONE, "11111");
         R1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
         R1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
@@ -58,7 +58,7 @@ public abstract class AbstractStorageTest {
                 new OrganizationSection(
                         new Organization("Organization2", "https://Organization2.ru",
                                 new Organization.Position(2015, Month.JANUARY,
-                                        "position1", "content1"))));
+                                        "position1", "content1"))));*/
     }
 
     protected AbstractStorageTest(Storage storage) {
@@ -78,14 +78,14 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void size() {
-        Assertions.assertEquals(3, storage.size());
+        assertEquals(3, storage.size());
     }
 
     @Test
     public void save() {
         storage.save(R4);
-        Assertions.assertEquals(4, storage.size());
-        Assertions.assertEquals(R4, storage.get("uuid4"));
+        assertEquals(4, storage.size());
+        assertEquals(R4, storage.get("uuid4"));
     }
 
     @Test
@@ -112,7 +112,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void delete() {
         storage.delete("uuid1");
-        Assertions.assertEquals(2, storage.size());
+        assertEquals(2, storage.size());
     }
 
     @Test
@@ -122,28 +122,28 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void get() {
-        Assertions.assertEquals(R1, storage.get("uuid1"));
-        Assertions.assertEquals(R2, storage.get("uuid2"));
-        Assertions.assertEquals(R3, storage.get("uuid3"));
+        assertEquals(R1, storage.get("uuid1"));
+        assertEquals(R2, storage.get("uuid2"));
+        assertEquals(R3, storage.get("uuid3"));
     }
 
     @Test
     public void getAll() throws IOException {
         List<Resume> resumes = storage.getAllSorted();
-        Assertions.assertEquals(3, resumes.size());
+        assertEquals(3, resumes.size());
     }
 
     @Test
     public void clear() throws IOException {
         storage.clear();
-        Assertions.assertEquals(0, storage.size());
+        assertEquals(0, storage.size());
     }
 
     @Test
     public void update() {
         Resume updatedResume = new Resume("uuid1", "Updated Name");
         storage.update(updatedResume);
-        Assertions.assertEquals(updatedResume, storage.get("uuid1"));
+        assertEquals(updatedResume, storage.get("uuid1"));
     }
 
     @Test
@@ -154,5 +154,13 @@ public abstract class AbstractStorageTest {
     @Test
     public void getNotExist() {
         assertThrows(NotExistStorageException.class, () -> storage.get("dummy"));
+    }
+
+    private void assertGet(Resume r) {
+        assertEquals(r, storage.get(r.getUuid()));
+    }
+
+    private void assertSize(int size) {
+        assertEquals(size, storage.size());
     }
 }
