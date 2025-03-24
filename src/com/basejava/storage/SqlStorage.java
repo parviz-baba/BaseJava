@@ -1,6 +1,5 @@
 package com.basejava.storage;
 
-import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.NotExistStorageException;
 import com.basejava.exception.StorageException;
 import com.basejava.model.Resume;
@@ -30,7 +29,7 @@ public class SqlStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume r WHERE r.uuid =?")) {
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume r WHERE r.uuid = ?")) {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
@@ -58,17 +57,14 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO resume (uuid, full_name) VALUES (?, ?)")) {
-            ps.setString(1, r.getUuid());
-            ps.setString(2, r.getFullName());
-            ps.execute();
-        } catch (SQLException e) {
-            if ("23505".equals(e.getSQLState())) { // 23505 - Unique violation error code in PostgreSQL
-                throw new ExistStorageException(r.getUuid());
-            }
-            throw new StorageException(e);
-        }
+        SqlHelper.execute(
+                "INSERT INTO resume (uuid, full_name) VALUES (?, ?)",
+                ps -> {
+                    ps.setString(1, r.getUuid());
+                    ps.setString(2, r.getFullName());
+                },
+                r.getUuid()
+        );
     }
 
     @Override

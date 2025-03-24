@@ -1,14 +1,14 @@
 package com.basejava.storage;
 
 import com.basejava.config.Config;
+import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.StorageException;
+import com.basejava.sql.SqlExecutor;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class SqlHelper {
     private static final String DB_URL = Config.getInstance().get("db.url");
@@ -19,21 +19,15 @@ public class SqlHelper {
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
 
-    public static void execute(String sql, Consumer<PreparedStatement> consumer) {
+    public static void execute(String sql, SqlExecutor executor, String uuid) {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            consumer.accept(ps);
+            executor.execute(ps);
             ps.execute();
         } catch (SQLException e) {
-            throw new StorageException(e);
-        }
-    }
-
-    public static <T> T executeQuery(String sql, Function<PreparedStatement, T> function) {
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            return function.apply(ps);
-        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                throw new ExistStorageException(uuid);
+            }
             throw new StorageException(e);
         }
     }
