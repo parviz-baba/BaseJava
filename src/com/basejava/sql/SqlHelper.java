@@ -1,9 +1,8 @@
-package com.basejava.storage;
+package com.basejava.sql;
 
 import com.basejava.config.Config;
 import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.StorageException;
-import com.basejava.sql.SqlExecutor;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

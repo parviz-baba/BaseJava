@@ -2,12 +2,15 @@ package com.basejava.storage;
 
 import com.basejava.exception.NotExistStorageException;
 import com.basejava.exception.StorageException;
+import com.basejava.model.ContactType;
 import com.basejava.model.Resume;
 import com.basejava.sql.ConnectionFactory;
+import com.basejava.sql.SqlHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     public final ConnectionFactory connectionFactory;
@@ -29,13 +32,25 @@ public class SqlStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume r WHERE r.uuid = ?")) {
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT r.uuid, r.full_name, c.type, c.value " +
+                     "FROM resume r " +
+                     "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
+                     "WHERE r.uuid = ?")) {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
                 throw new NotExistStorageException(uuid);
             }
-            return new Resume(uuid, rs.getString("full_name"));
+            Resume resume = new Resume(uuid, rs.getString("full_name"));
+            do {
+                String value = rs.getString("value");
+                if (value != null) {
+                    String type = rs.getString("type");
+                    resume.addContact(ContactType.valueOf(type), value);
+                }
+            } while (rs.next());
+            return resume;
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -65,6 +80,17 @@ public class SqlStorage implements Storage {
                 },
                 r.getUuid()
         );
+        for (Map.Entry<ContactType, String> entry : r.getContacts().entrySet()) {
+            SqlHelper.execute(
+                    "INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)",
+                    ps -> {
+                        ps.setString(1, r.getUuid());
+                        ps.setString(2, entry.getKey().name());
+                        ps.setString(3, entry.getValue());
+                    },
+                    r.getUuid()
+            );
+        }
     }
 
     @Override
