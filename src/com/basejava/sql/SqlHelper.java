@@ -30,4 +30,38 @@ public class SqlHelper {
             throw new StorageException(e);
         }
     }
+
+//    public static <T> T transactionalExecute(SqlTransaction<T> transaction) {
+//        try (Connection conn = getConnection()) {
+//            conn.setAutoCommit(false);
+//            try {
+//                T result = transaction.execute(conn);
+//                conn.commit();
+//                return result;
+//            } catch (SQLException e) {
+//                conn.rollback();
+//                throw new StorageException(e);
+//            }
+//        } catch (SQLException e) {
+//            throw new StorageException(e);
+//        }
+//    }
+
+    public static <T> void transactionalExecute(String uuid, SqlTransaction<T> transaction) {
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                T result = transaction.execute(conn);
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                if ("23505".equals(e.getSQLState())) {
+                    throw new ExistStorageException(uuid);
+                }
+                throw new StorageException(e);
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
 }
