@@ -1,47 +1,41 @@
 package com.basejava.sql;
 
-import com.basejava.config.Config;
-import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.StorageException;
-import com.basejava.storage.SqlStorage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SqlHelper {
-    private static final ConnectionFactory connectionFactory =
-            ((SqlStorage) Config.getInstance().getStorage()).connectionFactory;
+    private final ConnectionFactory connectionFactory;
 
-    public static Connection getConnection() throws SQLException {
-        return connectionFactory.getConnection();
+    public SqlHelper(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
-    public static void execute(String sql, SqlExecutor executor, String uuid) {
-        try (Connection conn = getConnection();
+    public void execute(String sql) {
+        execute(sql, PreparedStatement::execute);
+    }
+
+    public <T> T execute(String sql, SqlExecutor<T> executor) {
+        try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            executor.execute(ps);
-            ps.execute();
+            return executor.execute(ps);
         } catch (SQLException e) {
-            if ("23505".equals(e.getSQLState())) {
-                throw new ExistStorageException(uuid);
-            }
-            throw new StorageException(e);
+            throw ExceptionUtil.convertException(e);
         }
     }
 
-    public static void transactionalExecute(String uuid, SqlTransaction<?> transaction) {
-        try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false);
+    public <T> T transactionalExecute(SqlTransaction<T> executor) {
+        try (Connection conn = connectionFactory.getConnection()) {
             try {
-                transaction.execute(conn);
+                conn.setAutoCommit(false);
+                T res = executor.execute(conn);
                 conn.commit();
+                return res;
             } catch (SQLException e) {
                 conn.rollback();
-                if ("23505".equals(e.getSQLState())) {
-                    throw new ExistStorageException(uuid);
-                }
-                throw new StorageException(e);
+                throw ExceptionUtil.convertException(e);
             }
         } catch (SQLException e) {
             throw new StorageException(e);
