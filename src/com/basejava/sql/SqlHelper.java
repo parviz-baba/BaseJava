@@ -3,19 +3,18 @@ package com.basejava.sql;
 import com.basejava.config.Config;
 import com.basejava.exception.ExistStorageException;
 import com.basejava.exception.StorageException;
+import com.basejava.storage.SqlStorage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SqlHelper {
-    private static final String DB_URL = Config.getInstance().get("db.url");
-    private static final String DB_USER = Config.getInstance().get("db.user");
-    private static final String DB_PASSWORD = Config.getInstance().get("db.password");
+    private static final ConnectionFactory connectionFactory =
+            ((SqlStorage) Config.getInstance().getStorage()).connectionFactory;
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        return connectionFactory.getConnection();
     }
 
     public static void execute(String sql, SqlExecutor executor, String uuid) {
@@ -31,27 +30,11 @@ public class SqlHelper {
         }
     }
 
-//    public static <T> T transactionalExecute(SqlTransaction<T> transaction) {
-//        try (Connection conn = getConnection()) {
-//            conn.setAutoCommit(false);
-//            try {
-//                T result = transaction.execute(conn);
-//                conn.commit();
-//                return result;
-//            } catch (SQLException e) {
-//                conn.rollback();
-//                throw new StorageException(e);
-//            }
-//        } catch (SQLException e) {
-//            throw new StorageException(e);
-//        }
-//    }
-
-    public static <T> void transactionalExecute(String uuid, SqlTransaction<T> transaction) {
+    public static void transactionalExecute(String uuid, SqlTransaction<?> transaction) {
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
             try {
-                T result = transaction.execute(conn);
+                transaction.execute(conn);
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
