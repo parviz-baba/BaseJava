@@ -18,3 +18,5 @@ CREATE TABLE sections (
                           section_type VARCHAR(50) NOT NULL,
                           section_content TEXT NOT NULL
 );
+
+CREATE UNIQUE INDEX section_idx ON section (resume_uuid, type);
