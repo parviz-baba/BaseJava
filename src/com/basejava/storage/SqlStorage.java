@@ -1,6 +1,7 @@
 package com.basejava.storage;
 
 import com.basejava.exception.NotExistStorageException;
+import com.basejava.exception.StorageException;
 import com.basejava.model.*;
 import com.basejava.sql.SqlHelper;
 
@@ -23,24 +24,34 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute(
-                "SELECT * FROM resume r " +
-                "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
-                "WHERE r.uuid = ?",
-                ps -> {
-                    ps.setString(1, uuid);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (!rs.next()) {
-                            throw new NotExistStorageException(uuid);
-                        }
-                        Resume resume = new Resume(uuid, rs.getString("full_name"));
-                        do {
-                            addContact(rs, resume);
-                        } while (rs.next());
-                        return resume;
+        return sqlHelper.transactionalExecute(conn -> {
+            Resume resume;
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid WHERE r.uuid = ?")) {
+                ps.setString(1, uuid);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new NotExistStorageException(uuid);
+                    }
+                    resume = new Resume(uuid, rs.getString("full_name"));
+                    do {
+                        addContact(rs, resume);
+                    } while (rs.next());
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT * FROM sections WHERE resume_uuid = ?")) {
+                ps.setString(1, uuid);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        addSection(rs, resume);
                     }
                 }
-        );
+            }
+            return resume;
+        });
     }
 
     @Override
@@ -170,12 +181,20 @@ public class SqlStorage implements Storage {
                 ps.setString(2, entry.getKey().name());
 
                 Section section = entry.getValue();
-                if (section instanceof TextSection) {
-                    ps.setString(3, ((TextSection) section).getContent());
-                } else if (section instanceof ListSection) {
-                    String joined = String.join("\n", ((ListSection) section).getItems());
-                    ps.setString(3, joined);
+                switch (entry.getKey()) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        ps.setString(3, ((TextSection) section).getContent());
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        String joined = String.join("\n", ((ListSection) section).getItems());
+                        ps.setString(3, joined);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected section type: " + entry.getKey());
                 }
+
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -193,7 +212,17 @@ public class SqlStorage implements Storage {
     private void addSection(ResultSet rs, Resume r) throws SQLException {
         String type = rs.getString("section_type");
         String content = rs.getString("section_content");
-        SectionType sectionType = SectionType.valueOf(type);
+
+        if (type == null || content == null) {
+            throw new StorageException("Section type or content is null for resume " + r.getUuid(), r.getUuid());
+        }
+
+        final SectionType sectionType;
+        try {
+            sectionType = SectionType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new StorageException("Unknown section type: " + type, r.getUuid(), e);
+        }
 
         switch (sectionType) {
             case OBJECTIVE:
@@ -205,6 +234,8 @@ public class SqlStorage implements Storage {
                 List<String> items = Arrays.asList(content.split("\n"));
                 r.addSection(sectionType, new ListSection(items));
                 break;
+            default:
+                throw new StorageException("Unhandled section type: " + sectionType, r.getUuid());
         }
     }
 }
