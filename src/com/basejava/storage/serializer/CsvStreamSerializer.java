@@ -1,4 +1,4 @@
-package com.basejava.storage.strategy;
+package com.basejava.storage.serializer;
 
 import com.basejava.model.Resume;
 import org.apache.commons.csv.*;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CsvStreamSerializer implements StreamSerializer {
     @Override
-    public void write(Resume r, OutputStream os) throws IOException {
+    public void doWrite(Resume r, OutputStream os) throws IOException {
         try (Writer writer = new OutputStreamWriter(os);
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             csvPrinter.printRecord(r.getUuid(), r.getFullName());
@@ -16,7 +16,7 @@ public class CsvStreamSerializer implements StreamSerializer {
     }
 
     @Override
-    public Resume read(InputStream is) throws IOException {
+    public Resume doRead(InputStream is) throws IOException {
         try (Reader reader = new InputStreamReader(is);
              CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)) {
             List<CSVRecord> records = csvParser.getRecords();

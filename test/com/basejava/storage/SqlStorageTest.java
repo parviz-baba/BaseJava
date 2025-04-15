@@ -1,9 +1,9 @@
 package com.basejava.storage;
 
-import com.basejava.config.Config;
+import com.basejava.Config;
 
 public class SqlStorageTest extends AbstractStorageTest {
     public SqlStorageTest() {
-        super(Config.getInstance().getStorage());
+        super(Config.get().getStorage());
     }
 }

@@ -13,9 +13,9 @@ public class LazySingleton {
     public static LazySingleton getInstance() {
         return LazySingletonHolder.INSTANCE;
 //        if (INSTANCE == null) {
-//            synchronized (com.basejava.LazySingleton.class) {
+//            synchronized (LazySingleton.class) {
 //                if (INSTANCE == null) {
-//                    INSTANCE = new com.basejava.LazySingleton();
+//                    INSTANCE = new LazySingleton();
 //                }
 //            }
 //        }

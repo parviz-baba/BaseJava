@@ -2,13 +2,10 @@ package com.basejava.storage;
 
 import com.basejava.model.Resume;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapUuidStorage extends AbstractStorage<String> {
-    private final Map<String, Resume> storage = new HashMap<>();
+    private Map<String, Resume> map = new HashMap<>();
 
     @Override
     protected String getSearchKey(String uuid) {
@@ -17,41 +14,41 @@ public class MapUuidStorage extends AbstractStorage<String> {
 
     @Override
     protected void doUpdate(Resume r, String uuid) {
-        storage.put(uuid, r);
+        map.put(uuid, r);
     }
 
     @Override
     protected boolean isExist(String uuid) {
-        return storage.containsKey(uuid);
+        return map.containsKey(uuid);
     }
 
     @Override
     protected void doSave(Resume r, String uuid) {
-        storage.put(uuid, r);
+        map.put(uuid, r);
     }
 
     @Override
     protected Resume doGet(String uuid) {
-        return storage.get(uuid);
+        return map.get(uuid);
     }
 
     @Override
     protected void doDelete(String uuid) {
-        storage.remove(uuid);
+        map.remove(uuid);
     }
 
     @Override
     public void clear() {
-        storage.clear();
+        map.clear();
     }
 
     @Override
     public List<Resume> doCopyAll() {
-        return new ArrayList<>(storage.values());
+        return new ArrayList<>(map.values());
     }
 
     @Override
     public int size() {
-        return storage.size();
+        return map.size();
     }
 }

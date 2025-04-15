@@ -8,6 +8,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Link implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private String name;
     private String url;
 
@@ -37,7 +38,9 @@ public class Link implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Link link = (Link) o;
+
         if (!name.equals(link.name)) return false;
         return url != null ? url.equals(link.url) : link.url == null;
 

@@ -1,11 +1,9 @@
 package com.basejava.storage;
 
-import com.basejava.storage.strategy.ObjectStreamSerializer;
-
-import java.nio.file.Paths;
+import com.basejava.storage.serializer.ObjectStreamSerializer;
 
 public class ObjectPathStorageTest extends AbstractStorageTest {
     public ObjectPathStorageTest() {
-        super(new PathStorage(Paths.get(STORAGE_DIR.getAbsolutePath()), new ObjectStreamSerializer()));
+        super(new PathStorage(STORAGE_DIR.getAbsolutePath(), new ObjectStreamSerializer()));
     }
 }

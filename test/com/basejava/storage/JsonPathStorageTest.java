@@ -1,11 +1,9 @@
 package com.basejava.storage;
 
-import com.basejava.storage.strategy.JsonStreamSerializer;
-
-import java.nio.file.Paths;
+import com.basejava.storage.serializer.JsonStreamSerializer;
 
 public class JsonPathStorageTest extends AbstractStorageTest {
     public JsonPathStorageTest() {
-        super(new PathStorage(Paths.get(STORAGE_DIR.getAbsolutePath()), new JsonStreamSerializer()));
+        super(new PathStorage(STORAGE_DIR.getAbsolutePath(), new JsonStreamSerializer()));
     }
 }

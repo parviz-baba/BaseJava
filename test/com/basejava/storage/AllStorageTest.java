@@ -17,7 +17,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
         XmlPathStorageTest.class,
         JsonPathStorageTest.class,
         DataPathStorageTest.class,
-        SerializationStrategyTest.class,
         SqlStorageTest.class
 })
 public class AllStorageTest {

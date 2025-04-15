@@ -1,20 +1,18 @@
 package com.basejava;
 
-import java.io.IOException;
-
 public class MainString {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String[] strArray = new String[]{"1", "2", "3", "4", "5"};
+//        String result = "";
         StringBuilder sb = new StringBuilder();
-
         for (String str : strArray) {
-            System.out.println(str);
+            sb.append(str).append(", ");
         }
+        System.out.println(sb.toString());
 
-        System.out.println(sb);
         String str1 = "abc";
         String str3 = "c";
         String str2 = ("ab" + str3).intern();
-        System.out.println(str1.equals(str2));
+        System.out.println(str1 == str2);
     }
 }

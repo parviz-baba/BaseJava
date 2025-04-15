@@ -9,6 +9,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationSection extends Section {
     private static final long serialVersionUID = 1L;
+
     private List<Organization> organizations;
 
     public OrganizationSection() {}
@@ -30,7 +31,9 @@ public class OrganizationSection extends Section {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         OrganizationSection that = (OrganizationSection) o;
+
         return organizations.equals(that.organizations);
 
     }
