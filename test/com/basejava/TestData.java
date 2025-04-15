@@ -11,10 +11,10 @@ public class TestData {
     public static final String UUID_3 = UUID.randomUUID().toString();
     public static final String UUID_4 = UUID.randomUUID().toString();
 
-    public static final Resume R1;
-    public static final Resume R2;
-    public static final Resume R3;
-    public static final Resume R4;
+    public static Resume R1;
+    public static Resume R2;
+    public static Resume R3;
+    public static Resume R4;
 
     static {
         R1 = new Resume(UUID_1, "Name1");
