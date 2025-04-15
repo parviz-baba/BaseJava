@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ResumeServlet extends HttpServlet {
-
-    private Storage storage; // = Config.get().getStorage();
+    private Storage storage;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -64,15 +63,12 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
-        // Mentor bəndi 6: Boş CV-lərin saxlanmamasını təmin et
         if (r.getContacts().isEmpty() && r.getSections().isEmpty()) {
             response.sendRedirect("resume");
             return;
         }
 
         storage.update(r);
-
-        // Mentor bəndi 7: Redaktə səhifəsinə yönləndir
         response.sendRedirect("resume?uuid=" + r.getUuid() + "&action=edit");
     }
 
