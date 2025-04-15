@@ -1,8 +1,7 @@
 package com.basejava.web;
 
 import com.basejava.Config;
-import com.basejava.model.ContactType;
-import com.basejava.model.Resume;
+import com.basejava.model.*;
 import com.basejava.storage.Storage;
 
 import javax.servlet.ServletConfig;
@@ -11,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ResumeServlet extends HttpServlet {
 
@@ -22,20 +24,46 @@ public class ResumeServlet extends HttpServlet {
         storage = Config.get().getStorage();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
         Resume r = storage.get(uuid);
         r.setFullName(fullName);
+
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
-                r.addContact(type, value);
+            if (value != null && !value.trim().isEmpty()) {
+                r.addContact(type, value.trim());
             } else {
                 r.getContacts().remove(type);
             }
         }
+
+        for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
+            if (value == null || value.trim().isEmpty()) {
+                r.getSections().remove(type);
+                continue;
+            }
+
+            switch (type) {
+                case OBJECTIVE:
+                case PERSONAL:
+                    r.addSection(type, new TextSection(value.trim()));
+                    break;
+                case ACHIEVEMENT:
+                case QUALIFICATIONS:
+                    List<String> items = Arrays.stream(value.split("\\n"))
+                            .map(String::trim)
+                            .filter(s -> !s.isEmpty())
+                            .collect(Collectors.toList());
+                    r.addSection(type, new ListSection(items));
+                    break;
+            }
+        }
+
         storage.update(r);
         response.sendRedirect("resume");
     }
