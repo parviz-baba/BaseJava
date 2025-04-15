@@ -64,8 +64,16 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
+        // Mentor bəndi 6: Boş CV-lərin saxlanmamasını təmin et
+        if (r.getContacts().isEmpty() && r.getSections().isEmpty()) {
+            response.sendRedirect("resume");
+            return;
+        }
+
         storage.update(r);
-        response.sendRedirect("resume");
+
+        // Mentor bəndi 7: Redaktə səhifəsinə yönləndir
+        response.sendRedirect("resume?uuid=" + r.getUuid() + "&action=edit");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {

@@ -4,10 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,6 +51,16 @@ public class Resume implements Comparable<Resume>, Serializable {
 
     public Map<SectionType, Section> getSections() {
         return sections;
+    }
+
+    public String getSectionText(String type) {
+        Section s = sections.get(SectionType.valueOf(type));
+        return s instanceof TextSection ? ((TextSection) s).getContent() : "";
+    }
+
+    public List<String> getSectionList(String type) {
+        Section s = sections.get(SectionType.valueOf(type));
+        return s instanceof ListSection ? ((ListSection) s).getItems() : Collections.emptyList();
     }
 
     public String getContact(ContactType type) {
