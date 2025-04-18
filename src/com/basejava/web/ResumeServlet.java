@@ -66,7 +66,6 @@ public class ResumeServlet extends HttpServlet {
                             .collect(Collectors.toList());
                     r.addSection(type, new ListSection(items));
                     break;
-                // OrganizationSection redaktəsi hələlik əlavə olunmur
             }
         }
 
