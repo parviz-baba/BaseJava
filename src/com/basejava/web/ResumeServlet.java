@@ -28,8 +28,14 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
+
+        if (fullName == null || fullName.trim().isEmpty()) {
+            response.sendRedirect("resume?uuid=" + uuid + "&action=edit&error=emptyName");
+            return;
+        }
+
         Resume r = storage.get(uuid);
-        r.setFullName(fullName);
+        r.setFullName(fullName.trim());
 
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
@@ -54,12 +60,13 @@ public class ResumeServlet extends HttpServlet {
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
-                    List<String> items = Arrays.stream(value.split("\\n"))
+                    List<String> items = Arrays.stream(value.split("\n"))
                             .map(String::trim)
                             .filter(s -> !s.isEmpty())
                             .collect(Collectors.toList());
                     r.addSection(type, new ListSection(items));
                     break;
+                // OrganizationSection redaktəsi hələlik əlavə olunmur
             }
         }
 
@@ -72,14 +79,17 @@ public class ResumeServlet extends HttpServlet {
         response.sendRedirect("resume?uuid=" + r.getUuid() + "&action=edit");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
+
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
             return;
         }
+
         Resume r;
         switch (action) {
             case "delete":
@@ -93,6 +103,7 @@ public class ResumeServlet extends HttpServlet {
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
         }
+
         request.setAttribute("resume", r);
         request.getRequestDispatcher(
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
