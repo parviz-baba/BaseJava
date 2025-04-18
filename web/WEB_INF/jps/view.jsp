@@ -1,96 +1,59 @@
-<%@ page import="com.basejava.model.ContactType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.basejava.model.*" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="css/style.css">
-    <jsp:useBean id="resume" type="com.basejava.model.Resume" scope="request"/>
-    <title>Просмотр резюме</title>
+    <title>View Resume</title>
 </head>
 <body>
-<jsp:include page="fragments/header.jsp"/>
-<section>
-    <h2>${resume.fullName}</h2>
-    <h3>Контакты</h3>
-    <ul>
-        <c:forEach var="contact" items="${resume.contacts}">
-            <li><b>${contact.key.title}</b>: ${contact.value}</li>
-        </c:forEach>
-    </ul>
+<h1>Resume: ${resume.fullName}</h1>
 
-    <h3>Секции</h3>
-    <c:if test="${resume.sections.OBJECTIVE != null}">
-        <h4>Objective</h4>
-        <p>${resume.sections.OBJECTIVE.content}</p>
-    </c:if>
-    <c:if test="${resume.sections.PERSONAL != null}">
-        <h4>Personal</h4>
-        <p>${resume.sections.PERSONAL.content}</p>
-    </c:if>
+<h3>Contacts</h3>
+<ul>
+    <c:forEach var="entry" items="${resume.contacts}">
+        <li>${entry.key}: ${entry.value}</li>
+    </c:forEach>
+</ul>
 
-    <c:if test="${resume.sections.ACHIEVEMENT != null}">
-        <h4>Achievements</h4>
-        <ul>
-            <c:forEach var="item" items="${resume.sections.ACHIEVEMENT.items}">
-                <li>${item}</li>
+<h3>Sections</h3>
+<c:forEach var="entry" items="${resume.sections}">
+    <h4>${entry.key}</h4>
+    <c:choose>
+        <!-- TextSection -->
+        <c:when test="${entry.value.class.simpleName == 'TextSection'}">
+            <p>${entry.value.content}</p>
+        </c:when>
+
+        <!-- ListSection -->
+        <c:when test="${entry.value.class.simpleName == 'ListSection'}">
+            <ul>
+                <c:forEach var="item" items="${entry.value.items}">
+                    <li>${item}</li>
+                </c:forEach>
+            </ul>
+        </c:when>
+
+        <!-- OrganizationSection -->
+        <c:when test="${entry.value.class.simpleName == 'OrganizationSection'}">
+            <c:forEach var="org" items="${entry.value.organizations}">
+                <div>
+                    <strong>${org.homePage.name}</strong> <a href="${org.homePage.url}" target="_blank">${org.homePage.url}</a><br/>
+                    <ul>
+                        <c:forEach var="pos" items="${org.positions}">
+                            <li>
+                                <strong>${pos.startDate} - ${pos.endDate}</strong>: ${pos.title}<br/>
+                                <c:if test="${not empty pos.description}">
+                                    <em>${pos.description}</em>
+                                </c:if>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
             </c:forEach>
-        </ul>
-    </c:if>
-    <c:if test="${resume.sections.QUALIFICATIONS != null}">
-        <h4>Qualifications</h4>
-        <ul>
-            <c:forEach var="item" items="${resume.sections.QUALIFICATIONS.items}">
-                <li>${item}</li>
-            </c:forEach>
-        </ul>
-    </c:if>
-</section>
-<jsp:include page="fragments/footer.jsp"/>
+        </c:when>
+    </c:choose>
+</c:forEach>
 </body>
 </html>
-
-
-<c:if test="${resume.sections.EXPERIENCE != null}">
-    <h4>Experience</h4>
-    <c:forEach var="org" items="${resume.sections.EXPERIENCE.organizations}">
-        <div>
-            <strong>${org.homePage.name}</strong>
-            <c:if test="${org.homePage.url != null && !org.homePage.url.isEmpty()}">
-                (<a href="${org.homePage.url}" target="_blank">${org.homePage.url}</a>)
-            </c:if>
-            <ul>
-                <c:forEach var="pos" items="${org.positions}">
-                    <li>
-                            ${pos.startDate} - ${pos.endDate}: <strong>${pos.title}</strong>
-                        <c:if test="${pos.description != null && !pos.description.isEmpty()}">
-                            <br/>${pos.description}
-                        </c:if>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
-    </c:forEach>
-</c:if>
-
-<c:if test="${resume.sections.EDUCATION != null}">
-    <h4>Education</h4>
-    <c:forEach var="org" items="${resume.sections.EDUCATION.organizations}">
-        <div>
-            <strong>${org.homePage.name}</strong>
-            <c:if test="${org.homePage.url != null && !org.homePage.url.isEmpty()}">
-                (<a href="${org.homePage.url}" target="_blank">${org.homePage.url}</a>)
-            </c:if>
-            <ul>
-                <c:forEach var="pos" items="${org.positions}">
-                    <li>
-                            ${pos.startDate} - ${pos.endDate}: <strong>${pos.title}</strong>
-                        <c:if test="${pos.description != null && !pos.description.isEmpty()}">
-                            <br/>${pos.description}
-                        </c:if>
-                    </li>
-                </c:forEach>
-            </ul>
-        </div>
-    </c:forEach>
-</c:if>

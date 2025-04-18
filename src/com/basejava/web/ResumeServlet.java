@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ResumeServlet extends HttpServlet {
@@ -65,6 +65,40 @@ public class ResumeServlet extends HttpServlet {
                             .filter(s -> !s.isEmpty())
                             .collect(Collectors.toList());
                     r.addSection(type, new ListSection(items));
+                    break;
+                case EXPERIENCE:
+                case EDUCATION:
+                    List<Organization> organizations = new ArrayList<>();
+                    int orgIndex = 0;
+                    while (true) {
+                        String name = request.getParameter(type.name() + "_name_" + orgIndex);
+                        if (name == null) break;
+                        name = name.trim();
+                        if (name.isEmpty()) {
+                            orgIndex++;
+                            continue;
+                        }
+                        String url = request.getParameter(type.name() + "_url_" + orgIndex);
+                        List<Organization.Position> positions = new ArrayList<>();
+                        int posIndex = 0;
+                        while (true) {
+                            String title = request.getParameter(type.name() + "_title_" + orgIndex + "_" + posIndex);
+                            if (title == null || title.trim().isEmpty()) break;
+                            String start = request.getParameter(type.name() + "_startDate_" + orgIndex + "_" + posIndex);
+                            String end = request.getParameter(type.name() + "_endDate_" + orgIndex + "_" + posIndex);
+                            String desc = request.getParameter(type.name() + "_description_" + orgIndex + "_" + posIndex);
+                            positions.add(new Organization.Position(
+                                    LocalDate.parse(start),
+                                    LocalDate.parse(end),
+                                    title.trim(),
+                                    desc != null ? desc.trim() : null
+                            ));
+                            posIndex++;
+                        }
+                        organizations.add(new Organization(new Link(name, url), positions));
+                        orgIndex++;
+                    }
+                    r.addSection(type, new OrganizationSection(organizations));
                     break;
             }
         }
