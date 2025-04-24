@@ -10,6 +10,9 @@
 <h1>Edit Resume</h1>
 <form method="post">
     <input type="hidden" name="uuid" value="${resume.uuid}"/>
+    <c:if test="${param.error == 'emptyName'}">
+        <p style="color:red;">Full Name sahəsi boş ola bilməz!</p>
+    </c:if>
     Full Name: <input type="text" name="fullName" value="${resume.fullName}"/><br/>
 
     <h3>Contacts</h3>
