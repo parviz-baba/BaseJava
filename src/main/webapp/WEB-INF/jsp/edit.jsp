@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="com.basejava.model.*" %>
+<%@ page import="com.basejava.model.OrganizationSection" %>
+<%@ page import="com.basejava.model.SectionType" %>
 <html>
 <head>
     <title>Edit Resume</title>

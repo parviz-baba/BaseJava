@@ -10,6 +10,7 @@
 
     <dependencies>
 
+        <!-- JUnit Platform Suite - для запуска тестов как набора -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
@@ -17,6 +18,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JUnit Jupiter API - аннотации и интерфейсы для написания тестов -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -24,47 +26,57 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JUnit Jupiter Engine - механизм выполнения тестов -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- JAXB API - для работы с XML (аннотации и интерфейсы) -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
+
+        <!-- JAXB Runtime - реализация для JAXB API -->
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
             <version>2.3.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.8</version>
-        </dependency>
+        <!-- Apache Commons CSV (v1.8) - для работы с CSV-файлами -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.commons</groupId>-->
+<!--            <artifactId>commons-csv</artifactId>-->
+<!--            <version>1.8</version>-->
+<!--        </dependency>-->
 
+        <!-- Apache Commons CSV (v1.9.0) - более новая версия, дублируется -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>1.9.0</version>
         </dependency>
 
+        <!-- Gson - библиотека для работы с JSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.9</version>
         </dependency>
 
+        <!-- PostgreSQL драйвер - для подключения к базе данных PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.5</version>
         </dependency>
 
+        <!-- Servlet API - интерфейсы для работы с сервлетами (только на сервере) -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -72,12 +84,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- JSTL - библиотека тегов для JSP -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
 
     </dependencies>
 
@@ -94,4 +106,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>

@@ -16,7 +16,7 @@ public class FileTreePrinter {
 
     private static void printDirectory(File dir, int level) throws IOException {
         String indent = String.join("", Collections.nCopies(level * 2, " "));
-        System.out.println(indent + "📁" + dir.getName() + "/");
+        System.out.println(indent + "\uD83D\uDCC1" + dir.getName() + "/");
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
