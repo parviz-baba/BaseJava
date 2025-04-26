@@ -28,7 +28,7 @@ public enum ContactType {
             return toLink(value);
         }
     },
-    STATCKOVERFLOW("Профиль Stackoverflow") {
+    STACKOVERFLOW("Профиль Stackoverflow") {
         @Override
         public String toHtml0(String value) {
             return toLink(value);

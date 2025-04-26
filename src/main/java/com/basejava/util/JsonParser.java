@@ -1,19 +1,16 @@
 package com.basejava.util;
 
-import com.basejava.model.Section;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.basejava.model.Section;
 
 import java.io.Reader;
 import java.io.Writer;
-import java.time.LocalDate;
 
 public class JsonParser {
     private static Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Section.class, new JsonSectionAdapter())
-            .registerTypeAdapter(LocalDate.class, new LocalDateGsonAdapter())
+            .registerTypeAdapter(Section.class, new com.basejava.util.JsonSectionAdapter())
             .create();
-
 
     public static <T> T read(Reader reader, Class<T> clazz) {
         return GSON.fromJson(reader, clazz);

@@ -1,82 +1,68 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ page import="com.basejava.model.*" %>
-<%@ page import="com.basejava.model.OrganizationSection" %>
+<%@ page import="com.basejava.model.ContactType" %>
 <%@ page import="com.basejava.model.SectionType" %>
+<%@ page import="com.basejava.model.Resume" %>
+
+
+<%
+    Resume resume = (Resume) request.getAttribute("resume");
+%>
+
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Edit Resume</title>
+    <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
 </head>
 <body>
-<h1>Edit Resume</h1>
-<form method="post">
-    <input type="hidden" name="uuid" value="${resume.uuid}"/>
-    <c:if test="${param.error == 'emptyName'}">
-        <p style="color:red;">Full Name sahəsi boş ola bilməz!</p>
-    </c:if>
-    Full Name: <input type="text" name="fullName" value="${resume.fullName}"/><br/>
+<jsp:include page="fragments/header.jsp"/>
 
-    <h3>Contacts</h3>
-    <c:forEach var="type" items="${ContactType.values()}">
-        ${type}: <input type="text" name="${type}" value="${resume.getContact(type)}"/><br/>
-    </c:forEach>
+<section>
+    <form method="post" action="resume">
+        <% if (resume != null && resume.getUuid() != null && !resume.getUuid().isEmpty()) { %>
+        <input type="hidden" name="uuid" value="<%= resume.getUuid() %>"/>
+        <% } %>
 
-    <h3>Text Sections</h3>
-    OBJECTIVE: <textarea name="OBJECTIVE">${resume.getSections().get(SectionType.OBJECTIVE)}</textarea><br/>
-    PERSONAL: <textarea name="PERSONAL">${resume.getSections().get(SectionType.PERSONAL)}</textarea><br/>
+        <div>
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" value="<%= resume.getFullName() %>" size="30" required/>
+        </div>
 
-    <h3>List Sections</h3>
-    ACHIEVEMENT: <textarea name="ACHIEVEMENT">
-<c:forEach var="item" items="${resume.getSections().get(SectionType.ACHIEVEMENT).items}">
-    ${item}
-</c:forEach></textarea><br/>
-
-    QUALIFICATIONS: <textarea name="QUALIFICATIONS">
-<c:forEach var="item" items="${resume.getSections().get(SectionType.QUALIFICATIONS).items}">
-    ${item}
-</c:forEach></textarea><br/>
-
-    <h3>Experience</h3>
-    <% OrganizationSection experienceSection = (OrganizationSection) resume.getSections().get(SectionType.EXPERIENCE); %>
-    <div id="experience-section">
-        <c:forEach var="org" items="${experienceSection.organizations}" varStatus="orgStatus">
-            <div class="organization-block">
-                <input type="text" name="EXPERIENCE_name_${orgStatus.index}" value="${org.homePage.name}" placeholder="Company Name"/><br/>
-                <input type="text" name="EXPERIENCE_url_${orgStatus.index}" value="${org.homePage.url}" placeholder="Company URL"/><br/>
-                <c:forEach var="pos" items="${org.positions}" varStatus="posStatus">
-                    <div class="position-block">
-                        <input type="text" name="EXPERIENCE_title_${orgStatus.index}_${posStatus.index}" value="${pos.title}" placeholder="Title"/><br/>
-                        <input type="date" name="EXPERIENCE_startDate_${orgStatus.index}_${posStatus.index}" value="${pos.startDate}"/><br/>
-                        <input type="date" name="EXPERIENCE_endDate_${orgStatus.index}_${posStatus.index}" value="${pos.endDate}"/><br/>
-                        <textarea name="EXPERIENCE_description_${orgStatus.index}_${posStatus.index}" placeholder="Description">${pos.description}</textarea><br/>
-                    </div>
-                </c:forEach>
+        <h3>Contacts</h3>
+        <c:forEach items="${ContactType.values()}" var="type">
+            <div>
+                <label for="${type.name()}">${type.title}</label>
+                <input type="text" id="${type.name()}" name="${type.name()}" size="30" value="${resume.getContact(type)}"/>
             </div>
         </c:forEach>
-    </div>
 
-    <h3>Education</h3>
-    <% OrganizationSection educationSection = (OrganizationSection) resume.getSections().get(SectionType.EDUCATION); %>
-    <div id="education-section">
-        <c:forEach var="org" items="${educationSection.organizations}" varStatus="orgStatus">
-            <div class="organization-block">
-                <input type="text" name="EDUCATION_name_${orgStatus.index}" value="${org.homePage.name}" placeholder="School Name"/><br/>
-                <input type="text" name="EDUCATION_url_${orgStatus.index}" value="${org.homePage.url}" placeholder="School URL"/><br/>
-                <c:forEach var="pos" items="${org.positions}" varStatus="posStatus">
-                    <div class="position-block">
-                        <input type="text" name="EDUCATION_title_${orgStatus.index}_${posStatus.index}" value="${pos.title}" placeholder="Title"/><br/>
-                        <input type="date" name="EDUCATION_startDate_${orgStatus.index}_${posStatus.index}" value="${pos.startDate}"/><br/>
-                        <input type="date" name="EDUCATION_endDate_${orgStatus.index}_${posStatus.index}" value="${pos.endDate}"/><br/>
-                        <textarea name="EDUCATION_description_${orgStatus.index}_${posStatus.index}" placeholder="Description">${pos.description}</textarea><br/>
-                    </div>
-                </c:forEach>
-            </div>
+        <h3>Text Sections</h3>
+        <c:forEach items="${SectionType.values()}" var="type">
+            <c:if test="${type.isText()}">
+                <div>
+                    <label for="${type.name()}">${type.title}</label>
+                    <textarea id="${type.name()}" name="${type.name()}" rows="3" cols="50">${resume.getSection(type)}</textarea>
+                </div>
+            </c:if>
         </c:forEach>
-    </div>
 
-    <br/>
-    <input type="submit" value="Save"/>
-</form>
+        <h3>List Sections</h3>
+        <c:forEach items="${SectionType.values()}" var="type">
+            <c:if test="${type.isList()}">
+                <div>
+                    <label for="${type.name()}">${type.title}</label>
+                    <textarea id="${type.name()}" name="${type.name()}" rows="5" cols="50">${resume.getSection(type)}</textarea>
+                </div>
+            </c:if>
+        </c:forEach>
+
+        <div>
+            <button type="submit">Save</button>
+        </div>
+    </form>
+</section>
+
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

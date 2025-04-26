@@ -6,6 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * gkislin
+ * 19.07.2016
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrganizationSection extends Section {
     private static final long serialVersionUID = 1L;

@@ -1,71 +1,116 @@
-section {
-    width: 900px;
-    margin: auto;
-}
-
-header {
-    background: none repeat scroll 0 0 #A6C9E2;
-    color: #2E6E9E;
-    font-size: 20px;
-    padding: 5px 20px;
-    text-align: center;
-}
-
-footer {
-    background: none repeat scroll 0 0 #A6C9E2;
-    color: #2E6E9E;
-    font-size: 20px;
-    padding: 5px 20px;
-    margin: 20px 0;
-    text-align: center;
-}
-
-dl {
-    background: none repeat scroll 0 0 #FAFAFA;
-    margin: 8px 0;
+/* Ümumi bədən */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
     padding: 0;
+    color: #333;
 }
 
-dt {
-    display: inline-block;
-    width: 170px;
+/* Header */
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 24px;
 }
 
-dd {
-    display: inline-block;
-    margin-left: 8px;
-    vertical-align: top;
+/* Footer */
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 14px;
+    position: relative;
+    bottom: 0;
+    width: 100%;
 }
 
-h2, h3 {
-    margin: 15px 0 5px;
+/* Section əsas kontent */
+section {
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table dizaynı */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Linklər */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* İkonlu linklər */
+a[href^="mailto:"]:before {
+    content: "✉️ ";
+}
+
+a[href^="skype:"]:before {
+    content: "📞 ";
+}
+
+a[href^="https://www.linkedin."]:before {
+    content: "💼 ";
+}
+
+a[href^="https://github."]:before {
+    content: "🐙 ";
+}
+
+/* Başlıqlar */
+h1, h2, h3 {
+    margin: 15px 0;
+    color: #333;
+}
+
+/* Siyahılar */
+ul {
+    padding-left: 20px;
 }
 
 li {
-    margin: 15px 0;
+    margin-bottom: 8px;
 }
 
-a[href^="skype:"] {
-    padding-left: 20px !important;
-    background: url(../img/skype.png) no-repeat center left;
+/* Düymələr (əgər istifadə olunsa) */
+button, input[type="submit"] {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-a[href^="mailto:"] {
-    padding-left: 20px !important;
-    background: url(../img/email.png) no-repeat center left;
-}
-
-a[href^="https://stackoverflow.com"] {
-    padding-left: 20px !important;
-    background: url(../img/so.png) no-repeat center left;
-}
-
-a[href^="https://www.linkedin.com"] {
-    padding-left: 20px !important;
-    background: url(../img/lin.png) no-repeat center left;
-}
-
-a[href*="github."] {
-    padding-left: 20px !important;
-    background: url(../img/gh.png) no-repeat center left;
+button:hover, input[type="submit"]:hover {
+    background-color: #0056b3;
 }

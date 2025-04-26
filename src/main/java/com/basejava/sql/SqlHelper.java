@@ -26,7 +26,7 @@ public class SqlHelper {
         }
     }
 
-    public <T> T transactionalExecute(SqlTransaction<T> executor) {
+    public <T> T transactionalExecute(com.basejava.sql.SqlTransaction<T> executor) {
         try (Connection conn = connectionFactory.getConnection()) {
             try {
                 conn.setAutoCommit(false);
